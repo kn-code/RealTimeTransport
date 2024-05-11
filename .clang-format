@@ -1,0 +1,24 @@
+---
+Language:        Cpp
+BasedOnStyle:  Microsoft
+AlignAfterOpenBracket: AlwaysBreak
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+  AlignCompound: true
+AlignConsecutiveDeclarations: None
+AlignOperands: Align
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortLambdasOnASingleLine: Inline
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: true
+BinPackParameters: false
+BraceWrapping:
+  BeforeLambdaBody: true
+PointerAlignment: Left
+ReflowComments: false
+UseTab: Never
+...
+

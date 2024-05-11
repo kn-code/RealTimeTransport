@@ -1,0 +1,4 @@
+build/
+doc/
+include/RealTimeTransport/RealTimeTransport_export.h
+.vscode/

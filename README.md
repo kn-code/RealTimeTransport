@@ -1,0 +1,20 @@
+# RealTimeTransport
+
+_RealTimeTransport_ is a C++20 library to simulate the real time dynamics of quantum transport processes.
+
+## Dependencies
+
+This library uses some C++-20 features and therefore needs a not too old compiler. The following compilers were used successfully in the build process:
+
+* gcc 11.4.0
+* clang 15
+
+Some functionalities require _blas_ and _lapacke_ packages, which are on Ubuntu-type systems most easily installed with
+
+```console
+$ apt install libopenblas-dev liblapacke-dev
+```
+
+## License
+
+This library is licensed under the [Mozilla Public License (MPL) version 2.0](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).
