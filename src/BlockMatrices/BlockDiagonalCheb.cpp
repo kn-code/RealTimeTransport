@@ -278,6 +278,19 @@ const SciCore::ChebAdaptive<BlockDiagonalCheb::MatrixType>& BlockDiagonalCheb::b
     return _pimpl->blocks[i];
 }
 
+BlockDiagonalCheb BlockDiagonalCheb::diff() const
+{
+    BlockDiagonalCheb returnValue;
+    returnValue._pimpl->blocks.reserve(_pimpl->blocks.size());
+
+    for (const auto& c : _pimpl->blocks)
+    {
+        returnValue._pimpl->blocks.push_back(c.diff());
+    }
+
+    return returnValue;
+}
+
 BlockDiagonalCheb BlockDiagonalCheb::integrate() const
 {
     BlockDiagonalCheb returnValue;

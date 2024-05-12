@@ -36,6 +36,8 @@ class REALTIMETRANSPORT_EXPORT Propagator
 
     const Model* model() const noexcept;
 
+    Propagator diff() const;
+
     BlockDiagonalCheb& Pi() noexcept;
     const BlockDiagonalCheb& Pi() const noexcept;
 

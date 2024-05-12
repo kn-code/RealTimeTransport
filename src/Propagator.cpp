@@ -71,6 +71,11 @@ const Model* Propagator::model() const noexcept
     return _model.get();
 }
 
+Propagator Propagator::diff() const
+{
+    return Propagator(_model, _propagator.diff());
+}
+
 BlockDiagonalCheb& Propagator::Pi() noexcept
 {
     return _propagator;

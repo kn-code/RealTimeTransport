@@ -106,7 +106,9 @@ class REALTIMETRANSPORT_EXPORT BlockDiagonalCheb
 
     const SciCore::ChebAdaptive<MatrixType>& block(int i) const;
 
+    BlockDiagonalCheb diff() const;
     BlockDiagonalCheb integrate() const;
+
     std::vector<SciCore::RealVector> sections() const;
 
     void serialize(cereal::BinaryInputArchive& archive);
