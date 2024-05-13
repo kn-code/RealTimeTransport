@@ -57,7 +57,7 @@ SciCore::Real CurrentKernel::stationaryCurrent(const Model::OperatorType& statio
 
 void CurrentKernel::_initialize(
     const MemoryKernel& K,
-    const BlockDiagonalCheb& propagator,
+    const Propagator& propagator,
     int r,
     Order order,
     SciCore::Real tMax,
@@ -85,7 +85,7 @@ void CurrentKernel::_initialize(
 
     std::function<BlockDiagonal(Real)> computePi = [&](Real t) -> BlockDiagonal
     {
-        return propagator(t);
+        return propagator.Pi()(t);
     };
 
     BlockDiagonalCheb propagatorMinusOne           = computePropagatorMinusOne(K.LInfty(), K.K(), errorGoal, tCrit);
@@ -231,7 +231,7 @@ namespace RealTimeTransport
 // FIXME this is exactly the same code as in renormalized PT, make it a template
 SciCore::ChebAdaptive<SciCore::Real> computeCurrent(
     const IteratedRG::CurrentKernel& KCurrent,
-    const BlockDiagonalCheb& propagator,
+    const Propagator& propagator,
     const Model::OperatorType& rho0)
 {
     using namespace SciCore;
@@ -244,7 +244,7 @@ SciCore::ChebAdaptive<SciCore::Real> computeCurrent(
 
     auto computeCurrent = [&](Real t) -> Real
     {
-        Model::SupervectorType rhoVec_t = propagator(t) * rho0Vec;
+        Model::SupervectorType rhoVec_t = propagator.Pi()(t) * rho0Vec;
 
         Real safety           = 0.1;
         Complex timeLocalPart = KCurrent.SigmaInfty() * rhoVec_t;
@@ -272,7 +272,8 @@ SciCore::ChebAdaptive<SciCore::Real> computeCurrent(
         return timeLocalPart.real() + integrateAdaptive(
                                           [&](Real s) -> Real
                                           {
-                                              Model::SupervectorType rhoVec_t_minus_s = propagator(t - s) * rho0Vec;
+                                              Model::SupervectorType rhoVec_t_minus_s =
+                                                  propagator.Pi()(t - s) * rho0Vec;
                                               Complex returnComplex = KCurrent.K()(s) * rhoVec_t_minus_s;
                                               return returnComplex.real();
                                           },

@@ -330,7 +330,8 @@ BlockDiagonalCheb MemoryKernel::_initMemoryKernel(
         // FIXME is a safety factor also needed here ?
         MemoryKernel KTwoLoop;
         KTwoLoop.initialize(_model.get(), Order::_2, tMax, errorGoal, executor, hMin, initialChebSections);
-        BlockDiagonalCheb propagator = computePropagator(KTwoLoop);
+        Propagator fullPi            = computePropagator(KTwoLoop);
+        BlockDiagonalCheb propagator = std::move(fullPi.Pi());
         _minusIK                     = std::move(KTwoLoop.K());
 
         std::cout << "Initialized with 2 loop RG" << std::endl;
@@ -399,9 +400,9 @@ Model::OperatorType MemoryKernel::stationaryState(int block) const
 namespace RealTimeTransport
 {
 
-BlockDiagonalCheb computePropagator(const IteratedRG::MemoryKernel& memoryKernel)
+Propagator computePropagator(const IteratedRG::MemoryKernel& memoryKernel)
 {
-    return computePropagatorTemplate(memoryKernel, -1);
+    return Propagator(memoryKernel.model(), computePropagatorTemplate(memoryKernel, -1));
 }
 
 } // namespace RealTimeTransport

@@ -29,7 +29,7 @@ class REALTIMETRANSPORT_EXPORT CurrentKernel
 
     CurrentKernel(
         const MemoryKernel& K,
-        const BlockDiagonalCheb& propagator,
+        const Propagator& propagator,
         int r,
         Order order,
         SciCore::Real tMax,
@@ -41,7 +41,7 @@ class REALTIMETRANSPORT_EXPORT CurrentKernel
 
     CurrentKernel(
         const MemoryKernel& K,
-        const BlockDiagonalCheb& propagator,
+        const Propagator& propagator,
         int r,
         Order order,
         SciCore::Real tMax,
@@ -91,7 +91,7 @@ class REALTIMETRANSPORT_EXPORT CurrentKernel
 
     void _initialize(
         const MemoryKernel& K,
-        const BlockDiagonalCheb& propagator,
+        const Propagator& propagator,
         int r,
         Order order,
         SciCore::Real tMax,
@@ -104,7 +104,7 @@ class REALTIMETRANSPORT_EXPORT CurrentKernel
 
 REALTIMETRANSPORT_EXPORT inline IteratedRG::CurrentKernel computeCurrentKernel(
     const IteratedRG::MemoryKernel& K,
-    const BlockDiagonalCheb& propagator,
+    const Propagator& propagator,
     int r,
     IteratedRG::Order order,
     SciCore::Real tMax,
@@ -116,7 +116,7 @@ REALTIMETRANSPORT_EXPORT inline IteratedRG::CurrentKernel computeCurrentKernel(
 
 REALTIMETRANSPORT_EXPORT inline IteratedRG::CurrentKernel computeCurrentKernel(
     const IteratedRG::MemoryKernel& K,
-    const BlockDiagonalCheb& propagator,
+    const Propagator& propagator,
     int r,
     IteratedRG::Order order,
     SciCore::Real tMax,
@@ -129,7 +129,7 @@ REALTIMETRANSPORT_EXPORT inline IteratedRG::CurrentKernel computeCurrentKernel(
 
 REALTIMETRANSPORT_EXPORT SciCore::ChebAdaptive<SciCore::Real> computeCurrent(
     const IteratedRG::CurrentKernel& KCurrent,
-    const BlockDiagonalCheb& propagator,
+    const Propagator& propagator,
     const Model::OperatorType& rho0);
 
 } // namespace RealTimeTransport

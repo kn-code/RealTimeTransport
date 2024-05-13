@@ -156,7 +156,7 @@ REALTIMETRANSPORT_EXPORT inline IteratedRG::MemoryKernel computeMemoryKernel(
     return IteratedRG::MemoryKernel(model, order, tMax, errorGoal, executor);
 }
 
-REALTIMETRANSPORT_EXPORT BlockDiagonalCheb computePropagator(const IteratedRG::MemoryKernel& memoryKernel);
+REALTIMETRANSPORT_EXPORT Propagator computePropagator(const IteratedRG::MemoryKernel& memoryKernel);
 
 } // namespace RealTimeTransport
 
