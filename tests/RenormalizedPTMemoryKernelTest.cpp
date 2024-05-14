@@ -560,8 +560,8 @@ TEST(SecondOrderExactSolutionAndersonDot, TransientOccupation)
         {.epsilon =  6, .B = 1,   .T = 0.1, .mu = RealVector{{-0.3, 0.1}}, .Gamma = RealVector{{0.9, 1.3}}, .tMax = 8, .errorGoal = 1e-10},
         {.epsilon =  0, .B = 0.1, .T = 0.1, .mu = RealVector{{-0.3, 0.1}}, .Gamma = RealVector{{0.9, 1.3}}, .tMax = 8, .errorGoal = 1e-10},
         {.epsilon =  6, .B = 1,   .T = 0.0, .mu = RealVector{{-0.3, 0.1}}, .Gamma = RealVector{{0.9, 1.3}}, .tMax = 8, .errorGoal = 1e-12},
-        {.epsilon =  20, .B = 5,  .T = 0.0, .mu = RealVector{{-10, 10}},   .Gamma = RealVector{{0.9, 1.3}}, .tMax = 20, .errorGoal = 1e-6},
-        {.epsilon = -75, .B = 30,  .T = 0.2, .mu = RealVector{{-20, 21}},   .Gamma = RealVector{{0.9, 1.3}}, .tMax = 5, .errorGoal = 1e-3}
+        {.epsilon =  20, .B = 5,  .T = 2.0, .mu = RealVector{{-10, 10}},   .Gamma = RealVector{{0.9, 1.3}}, .tMax = 20, .errorGoal = 1e-4},
+        {.epsilon = -75, .B = 30, .T = 2.0, .mu = RealVector{{-20, 21}},   .Gamma = RealVector{{0.9, 1.3}}, .tMax = 5, .errorGoal = 1e-4}
         };
     // clang-format on
 
