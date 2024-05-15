@@ -5,8 +5,11 @@
 //
 
 #include <cereal/archives/binary.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/portable_binary.hpp>
 
 #include <SciCore/ChebAdaptive.h>
+#include <SciCore/Serialization.h>
 
 #include "RealTimeTransport/BlockMatrices/BlockDiagonalCheb.h"
 
@@ -330,6 +333,16 @@ void BlockDiagonalCheb::serialize(cereal::BinaryInputArchive& archive)
 }
 
 void BlockDiagonalCheb::serialize(cereal::BinaryOutputArchive& archive)
+{
+    archive(_pimpl->blocks);
+}
+
+void BlockDiagonalCheb::serialize(cereal::PortableBinaryInputArchive& archive)
+{
+    archive(_pimpl->blocks);
+}
+
+void BlockDiagonalCheb::serialize(cereal::PortableBinaryOutputArchive& archive)
 {
     archive(_pimpl->blocks);
 }

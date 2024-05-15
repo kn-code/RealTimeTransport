@@ -62,8 +62,9 @@ TEST(AndersonDot, Serialization)
     auto dot = createModel<AndersonDot>(epsilon, B, U, T, mu, GammaUp, GammaDown);
 
     std::string archiveFilename = "anderson_dot_test_out.cereal";
-    std::remove(archiveFilename.c_str());
 
+    // Test binary archive
+    std::remove(archiveFilename.c_str());
     {
         std::ofstream os(archiveFilename, std::ios::binary);
         cereal::BinaryOutputArchive archive(os);
@@ -76,6 +77,26 @@ TEST(AndersonDot, Serialization)
         {
             std::ifstream is(archiveFilename, std::ios::binary);
             cereal::BinaryInputArchive archive(is);
+            archive(fromFile);
+        }
+
+        EXPECT_EQ(dynamic_cast<AndersonDot&>(*dot), dynamic_cast<AndersonDot&>(*fromFile));
+    }
+
+    // Test portable binary archive
+    std::remove(archiveFilename.c_str());
+    {
+        std::ofstream os(archiveFilename, std::ios::binary);
+        cereal::PortableBinaryOutputArchive archive(os);
+        archive(dot);
+    }
+
+    {
+        //auto fromFile = createModel<AndersonDot>();
+        std::unique_ptr<Model> fromFile;
+        {
+            std::ifstream is(archiveFilename, std::ios::binary);
+            cereal::PortableBinaryInputArchive archive(is);
             archive(fromFile);
         }
 

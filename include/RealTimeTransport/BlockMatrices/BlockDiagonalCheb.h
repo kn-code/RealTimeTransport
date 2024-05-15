@@ -19,6 +19,9 @@ namespace cereal
 {
 class BinaryInputArchive;
 class BinaryOutputArchive;
+
+class PortableBinaryInputArchive;
+class PortableBinaryOutputArchive;
 } // namespace cereal
 
 namespace SciCore
@@ -113,6 +116,8 @@ class REALTIMETRANSPORT_EXPORT BlockDiagonalCheb
 
     void serialize(cereal::BinaryInputArchive& archive);
     void serialize(cereal::BinaryOutputArchive& archive);
+    void serialize(cereal::PortableBinaryInputArchive& archive);
+    void serialize(cereal::PortableBinaryOutputArchive& archive);
 
   private:
     struct Impl;

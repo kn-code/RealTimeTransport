@@ -6,8 +6,6 @@
 
 #include "RealTimeTransport/Models/DoubleDot.h"
 
-#include <cereal/archives/binary.hpp>
-
 namespace RealTimeTransport
 {
 

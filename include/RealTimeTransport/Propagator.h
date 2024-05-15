@@ -43,6 +43,8 @@ class REALTIMETRANSPORT_EXPORT Propagator
 
     void serialize(cereal::BinaryInputArchive& archive);
     void serialize(cereal::BinaryOutputArchive& archive);
+    void serialize(cereal::PortableBinaryInputArchive& archive);
+    void serialize(cereal::PortableBinaryOutputArchive& archive);
 
   private:
     std::unique_ptr<Model> _model;

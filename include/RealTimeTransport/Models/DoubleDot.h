@@ -9,7 +9,13 @@
 
 #include "../Model.h"
 
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/portable_binary.hpp>
+#include <cereal/types/polymorphic.hpp>
+
 #include <SciCore/Definitions.h>
+#include <SciCore/Serialization.h>
 
 namespace RealTimeTransport
 {
@@ -164,5 +170,7 @@ class REALTIMETRANSPORT_EXPORT DoubleDot final : public Model
 };
 
 } // namespace RealTimeTransport
+
+// FIXME register type
 
 #endif // REAL_TIME_TRANSPORT_DOUBLE_DOT_H

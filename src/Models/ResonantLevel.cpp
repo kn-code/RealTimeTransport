@@ -6,9 +6,6 @@
 
 #include <fstream>
 
-#include <SciCore/Serialization.h>
-#include <cereal/types/polymorphic.hpp>
-
 #include "RealTimeTransport/Models/ResonantLevel.h"
 
 namespace RealTimeTransport

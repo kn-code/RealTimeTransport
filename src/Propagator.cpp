@@ -7,7 +7,11 @@
 #include <utility>
 
 #include <cereal/archives/binary.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/portable_binary.hpp>
 #include <cereal/types/polymorphic.hpp>
+
+#include <SciCore/Serialization.h>
 
 #include "RealTimeTransport/Propagator.h"
 
@@ -92,6 +96,16 @@ void Propagator::serialize(cereal::BinaryInputArchive& archive)
 }
 
 void Propagator::serialize(cereal::BinaryOutputArchive& archive)
+{
+    archive(_model, _propagator);
+}
+
+void Propagator::serialize(cereal::PortableBinaryInputArchive& archive)
+{
+    archive(_model, _propagator);
+}
+
+void Propagator::serialize(cereal::PortableBinaryOutputArchive& archive)
 {
     archive(_model, _propagator);
 }
