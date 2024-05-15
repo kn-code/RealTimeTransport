@@ -121,7 +121,6 @@ void MemoryKernel::initialize(
     Real epsAbs = errorGoal;
     Real epsRel = 0;
     Real tCrit  = std::min(2 / maxNorm(_minusILInfty), tMax);
-    Real safety = 0.1;
 
     if (hMin < 0)
     {
@@ -151,13 +150,12 @@ void MemoryKernel::initialize(
                                                                                     Real s) -> BlockVector<Complex>
     {
         return RealTimeTransport::RenormalizedPT::Detail::effectiveVertexDiagram1_col(
-            i, col, t, s, safety * epsAbs, tCrit, computePi, computePiM1, superfermion, _model.get());
+            i, col, t, s, epsAbs, tCrit, computePi, computePiM1, superfermion, _model.get());
     };
 
     std::function<BlockVector<Complex>(int, int, Real, Real)> computeD_O3_O5_col = [&](int i, int col, Real t,
                                                                                        Real s) -> BlockVector<Complex>
     {
-        // FIXME is a safety factor also needed here ?
         return _computeD_O3_O5_col(i, col, t, s, epsAbs, computePi, computeD_O3_col, superfermion);
     };
 
@@ -166,12 +164,11 @@ void MemoryKernel::initialize(
         std::cout << "computeNewKernel_2Loop: " << blockIndex << ", " << t << std::endl;
         return RenormalizedPT::Detail::diagram_1(blockIndex, t, tCrit, computePi, computePiM1, superfermion, model) +
                RenormalizedPT::Detail::diagram_2(
-                   blockIndex, t, safety * epsAbs, epsRel, computePi, computeD_O3_col, superfermion, model);
+                   blockIndex, t, epsAbs, epsRel, computePi, computeD_O3_col, superfermion, model);
     };
 
     auto computeNewKernel_3Loop = [&](int blockIndex, Real t) -> Matrix
     {
-        // FIXME is a safety factor also needed here ?
         std::cout << "computeNewKernel_3Loop: " << blockIndex << ", " << t << std::endl;
         return RenormalizedPT::Detail::diagram_1(blockIndex, t, tCrit, computePi, computePiM1, superfermion, model) +
                RenormalizedPT::Detail::diagram_2(
@@ -273,6 +270,7 @@ void MemoryKernel::initialize(
         else
         {
             // Iteration was not successful --> update propagator
+            Real safety   = 0.01;
             int nMinCheb  = 3 * 16;
             int numBlocks = model->blockDimensions().size();
             std::vector<ChebAdaptive<Matrix>> newPropagatorBlocks;

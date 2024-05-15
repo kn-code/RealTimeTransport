@@ -22,7 +22,8 @@ SciCore::ChebAdaptive<SciCore::Matrix> computePropagatorBlock(const MemoryKernel
 
     Real t0      = 0;
     Real tMax    = memoryKernel.tMax();
-    Real epsAbs  = memoryKernel.errorGoal();
+    Real safety  = 0.01;
+    Real epsAbs  = safety * memoryKernel.errorGoal();
     Real epsRel  = 0;
     int nMinCheb = 3 * 16;
 
