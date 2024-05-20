@@ -150,7 +150,7 @@ void MemoryKernel::initialize(
                                                                                     Real s) -> BlockVector<Complex>
     {
         return RealTimeTransport::RenormalizedPT::Detail::effectiveVertexDiagram1_col(
-            i, col, t, s, epsAbs, tCrit, computePi, computePiM1, superfermion, _model.get());
+            i, col, t, s, tCrit, epsAbs, computePi, computePiM1, superfermion, _model.get());
     };
 
     std::function<BlockVector<Complex>(int, int, Real, Real)> computeD_O3_O5_col = [&](int i, int col, Real t,
