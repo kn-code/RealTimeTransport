@@ -13,10 +13,10 @@ int main()
     Real U     = 5;   // Coulomb interaction
     Real Omega = 2;   // Hybridisation
     Real V     = 0.5; // Bias voltage
-    RealVector T{{1, 1}}; // Temperature leads
+    RealVector T{{1, 1}}; // Temperatures leads
     RealVector mu{{V/2, -V/2}}; // Chem. potential
 
-    // Couple lead L - dot 1 - dot 2 - lead R
+    // Serial setup: lead L - dot 1 - dot 2 - lead R
     RealVector Gamma1{{1, 0}}; // Dot 1 - lead L
     RealVector Gamma2{{0, 1}}; // Dot 2 - lead R
 
