@@ -82,6 +82,15 @@ class REALTIMETRANSPORT_EXPORT BlockMatrix
         return *this;
     }
 
+    BlockMatrix& operator*=(T x)
+    {
+        for (auto& el : _elements)
+        {
+            el.second *= x;
+        }
+        return *this;
+    }
+
     const std::vector<int>& blockDimensions() const noexcept
     {
         return _blockDims;
