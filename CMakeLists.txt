@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.25)
 # cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_BUILD_TYPE=Release -G Ninja
 #
 # Clang:
-# cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_Fortran_COMPILER=gfortran-11 -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release -G Ninja
+# cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++-16 -DCMAKE_Fortran_COMPILER=gfortran-11 -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release -G Ninja
 #
 # Useful flags: CMAKE_INSTALL_PREFIX, CMAKE_PREFIX_PATH, BLA_VENDOR
 #
@@ -17,7 +17,7 @@ project(
     VERSION 0.9.0
     DESCRIPTION "Real-time simulations of quantum dot dynamics"
     HOMEPAGE_URL "https://github.com/kn-code/RealTimeTransport"
-    LANGUAGES CXX Fortran
+    LANGUAGES CXX
 )
 
 # Require out-of-source builds
@@ -27,8 +27,6 @@ if(EXISTS "${LOC_PATH}")
 endif()
 
 include(FetchContent)
-
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Set these options only if we are the main project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -62,11 +60,8 @@ endif()
 #
 
 # BLAS and LAPACK
-set(LAPACKE_STATIC ON)
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
-find_package(LAPACKE REQUIRED)
-find_library(FORTRAN_LIB NAMES gfortran HINTS ${CMAKE_Fortran_IMPLICIT_LINK_DIRECTORIES})
 
 # SciCore
 find_package(SciCore 0.9.0 QUIET)

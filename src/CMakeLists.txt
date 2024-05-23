@@ -55,7 +55,7 @@ generate_export_header(RealTimeTransport
     EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/../include/RealTimeTransport/RealTimeTransport_export.h
 )
 
-target_link_libraries(RealTimeTransport PRIVATE BLAS::BLAS LAPACK::LAPACK ${LAPACKE_LIBRARIES_DEP} ${FORTRAN_LIB})
+target_link_libraries(RealTimeTransport PRIVATE BLAS::BLAS LAPACK::LAPACK)
 target_link_libraries(RealTimeTransport PUBLIC SciCore::SciCore)
 
 target_include_directories(RealTimeTransport PUBLIC
