@@ -146,12 +146,12 @@ REALTIMETRANSPORT_EXPORT inline Model::OperatorType computeStationaryState(
 }
 
 REALTIMETRANSPORT_EXPORT Model::OperatorType computeStationaryState(
-    const Model::BlockDiagonalType& M,
+    const BlockDiagonalMatrix& M,
     const Model* model,
     SciCore::Real tol);
 
 REALTIMETRANSPORT_EXPORT inline Model::OperatorType computeStationaryState(
-    const Model::BlockDiagonalType& M,
+    const BlockDiagonalMatrix& M,
     const std::unique_ptr<Model>& model,
     SciCore::Real tol)
 {

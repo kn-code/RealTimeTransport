@@ -33,9 +33,9 @@ BlockVector<SciCore::Complex> bareTwoPointVertex_col(
     SciCore::Real t_minus_tau1,
     SciCore::Real tau1_minus_tau2,
     SciCore::Real tau2_minus_s,
-    const Model::BlockDiagonalType& Pi1,
-    const Model::BlockDiagonalType& Pi2,
-    const Model::BlockDiagonalType& Pi3,
+    const BlockDiagonalMatrix& Pi1,
+    const BlockDiagonalMatrix& Pi2,
+    const BlockDiagonalMatrix& Pi3,
     SciCore::Real epsAbs,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
@@ -56,7 +56,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
     SciCore::Real epsAbs,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
@@ -77,7 +77,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection2_col(
     SciCore::Real t_minus_tau,
     SciCore::Real tau,
     SciCore::Real epsAbs,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
@@ -97,7 +97,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
     SciCore::Real t_minus_tau,
     SciCore::Real tau,
     SciCore::Real epsAbs,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -116,7 +116,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection4_col(
     SciCore::Real t_minus_tau,
     SciCore::Real tau,
     SciCore::Real epsAbs,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 

@@ -67,7 +67,6 @@ void CurrentKernel::_initialize(
 {
     using namespace SciCore;
     using namespace RealTimeTransport;
-    using BlockDiagonal  = Model::BlockDiagonalType;
     using Operator       = Model::OperatorType;
     using Supervector    = Model::SupervectorType;
     using SuperRowVector = Model::SuperRowVectorType;
@@ -83,13 +82,13 @@ void CurrentKernel::_initialize(
     _minusISigmaInfty = computeSigmaInftyCurrent(r, superfermionAnnihilation, _model);
     Real tCrit        = std::min(2 / maxNorm(K.LInfty()), tMax);
 
-    std::function<BlockDiagonal(Real)> computePi = [&](Real t) -> BlockDiagonal
+    std::function<BlockDiagonalMatrix(Real)> computePi = [&](Real t) -> BlockDiagonalMatrix
     {
         return propagator.Pi()(t);
     };
 
-    BlockDiagonalCheb propagatorMinusOne           = computePropagatorMinusOne(K.LInfty(), K.K(), errorGoal, tCrit);
-    std::function<BlockDiagonal(Real)> computePiM1 = [&](Real t) -> BlockDiagonal
+    BlockDiagonalCheb propagatorMinusOne = computePropagatorMinusOne(K.LInfty(), K.K(), errorGoal, tCrit);
+    std::function<BlockDiagonalMatrix(Real)> computePiM1 = [&](Real t) -> BlockDiagonalMatrix
     {
 #ifdef REAL_TIME_TRANSPORT_DEBUG
         if (t > tCrit)

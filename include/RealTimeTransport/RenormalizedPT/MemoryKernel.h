@@ -75,9 +75,9 @@ class REALTIMETRANSPORT_EXPORT MemoryKernel
         Order order,
         SciCore::Real tMax,
         SciCore::Real errorGoal,
-        tf::Executor* executor = nullptr,
-        int block              = -1,
-        SciCore::Real hMin     = -1,
+        tf::Executor* executor                                      = nullptr,
+        int block                                                   = -1,
+        SciCore::Real hMin                                          = -1,
         const std::vector<SciCore::RealVector>* initialChebSections = nullptr);
 
     bool operator==(const MemoryKernel& other) const noexcept;
@@ -90,7 +90,7 @@ class REALTIMETRANSPORT_EXPORT MemoryKernel
     ///
     /// @brief Returns -i L_{\infty} -i K(0), where L_{\infty} denotes the renormalized Liouvillian.
     ///
-    const Model::BlockDiagonalType& LInfty() const noexcept;
+    const BlockDiagonalMatrix& LInfty() const noexcept;
 
     ///
     /// @brief Returns -i K, where K denotes the memory kernel.
@@ -105,7 +105,7 @@ class REALTIMETRANSPORT_EXPORT MemoryKernel
     ///
     /// @brief Returns -i L_{\infty} -i K(0), where L_{\infty} denotes the renormalized Liouvillian and K(0) the memory kernel at zero frequency.
     ///
-    Model::BlockDiagonalType zeroFrequency() const;
+    BlockDiagonalMatrix zeroFrequency() const;
 
     ///
     /// @brief Returns the stationary state. This method assumes that the stationary state is unique.
@@ -122,7 +122,7 @@ class REALTIMETRANSPORT_EXPORT MemoryKernel
     std::unique_ptr<Model> _model;
     SciCore::Real _errorGoal;
 
-    Model::BlockDiagonalType _minusILInfty;
+    BlockDiagonalMatrix _minusILInfty;
     BlockDiagonalCheb _minusIK;
 };
 

@@ -23,7 +23,7 @@ namespace RealTimeTransport::RenormalizedPT::Detail
 SciCore::Matrix diagram_1_regular(
     int blockIndex,
     SciCore::Real t,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::vector<Model::SuperfermionType>& superfermions,
     const Model* model);
 
@@ -35,7 +35,7 @@ SciCore::Matrix diagram_1_regular(
 SciCore::Matrix diagram_1_small_t(
     int blockIndex,
     SciCore::Real t,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePiMinusOne,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -48,8 +48,8 @@ SciCore::Matrix diagram_1(
     int blockIndex,
     SciCore::Real t,
     SciCore::Real tCrit,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePiMinusOne,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -70,8 +70,8 @@ BlockVector<SciCore::Complex> effectiveVertexDiagram1_col(
     SciCore::Real tau_minus_s,
     SciCore::Real tCrit,
     SciCore::Real epsAbs,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePiMinusOne,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -95,7 +95,7 @@ SciCore::Matrix diagram_2(
     SciCore::Real t,
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
@@ -110,8 +110,8 @@ SciCore::Matrix diagram_2_2(
     SciCore::Real t,
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computeDiagram_1,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computeDiagram_1,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -124,8 +124,8 @@ Model::SuperRowVectorType currentDiagram_1(
     SciCore::Real t,
     int r,
     SciCore::Real tCrit,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePiMinusOne,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const Model::SuperRowVectorType& idRow,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
     const std::vector<Model::SuperfermionType>& superfermion,
@@ -142,7 +142,7 @@ Model::SuperRowVectorType currentDiagram_2(
     int r,
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
     const std::vector<int>& blockStartIndices,
@@ -159,8 +159,8 @@ Model::SuperRowVectorType currentDiagram_2_2(
     int r,
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computePi,
-    const std::function<Model::BlockDiagonalType(SciCore::Real)>& computeDiagram_1,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computeDiagram_1,
     const std::vector<Model::SuperfermionType>& superfermion,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
     const std::vector<int>& blockStartIndices,

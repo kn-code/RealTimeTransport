@@ -82,7 +82,7 @@ SciCore::Real MemoryKernel::errorGoal() const noexcept
     return _errorGoal;
 }
 
-const Model::BlockDiagonalType& MemoryKernel::LInfty() const noexcept
+const BlockDiagonalMatrix& MemoryKernel::LInfty() const noexcept
 {
     return _minusILInfty;
 }
@@ -108,7 +108,7 @@ void MemoryKernel::initialize(
 {
     using namespace SciCore;
     using namespace RealTimeTransport;
-    using BlockDiagonal = Model::BlockDiagonalType;
+    using BlockDiagonal = BlockDiagonalMatrix;
 
     _model     = model->copy();
     _errorGoal = errorGoal;
@@ -313,8 +313,8 @@ BlockDiagonalCheb MemoryKernel::_initMemoryKernel(
         BlockDiagonalCheb propagator = std::move(Pi.Pi());
         _minusIK                     = std::move(KPert.K());
 
-        std::cout << "Initialized with perturbation theory, " << "mu = " << _model->chemicalPotentials().transpose()
-                  << "\n";
+        std::cout << "Initialized with perturbation theory, "
+                  << "mu = " << _model->chemicalPotentials().transpose() << "\n";
         std::cout << "Sections =\n";
         for (const auto& sec : _minusIK.sections())
         {
@@ -370,10 +370,10 @@ BlockVector<SciCore::Complex> MemoryKernel::_computeD_O3_O5_col(
     return returnValue;
 }
 
-Model::BlockDiagonalType MemoryKernel::zeroFrequency() const
+BlockDiagonalMatrix MemoryKernel::zeroFrequency() const
 {
-    Model::BlockDiagonalType returnValue  = _minusILInfty;
-    returnValue                          += _minusIK.integrate()(tMax());
+    BlockDiagonalMatrix returnValue  = _minusILInfty;
+    returnValue                     += _minusIK.integrate()(tMax());
     return returnValue;
 }
 

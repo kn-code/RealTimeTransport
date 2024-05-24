@@ -219,7 +219,7 @@ Model::OperatorType computeStationaryState(const Model::SuperoperatorType& M, co
     return returnValue;
 }
 
-Model::OperatorType computeStationaryState(const Model::BlockDiagonalType& M, const Model* model, SciCore::Real tol)
+Model::OperatorType computeStationaryState(const BlockDiagonalMatrix& M, const Model* model, SciCore::Real tol)
 {
     using namespace SciCore;
 

@@ -19,6 +19,9 @@
 namespace RealTimeTransport
 {
 
+///
+/// @brief Abstract class representing a Model.
+///
 class REALTIMETRANSPORT_EXPORT Model
 {
   public:
@@ -36,9 +39,6 @@ class REALTIMETRANSPORT_EXPORT Model
 
     /// @brief Type representing superfermions.
     using SuperfermionType = BlockMatrix<SciCore::Complex>;
-
-    /// @brief Type representing superfermions.
-    using BlockDiagonalType = BlockDiagonalMatrix;
 
     Model() noexcept;
     virtual ~Model() noexcept;

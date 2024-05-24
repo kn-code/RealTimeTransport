@@ -65,7 +65,6 @@ void CurrentKernel::_initialize(
 {
     using namespace SciCore;
     using namespace RealTimeTransport;
-    using BlockDiagonal  = Model::BlockDiagonalType;
     using Operator       = Model::OperatorType;
     using Supervector    = Model::SupervectorType;
     using SuperRowVector = Model::SuperRowVectorType;
@@ -78,16 +77,16 @@ void CurrentKernel::_initialize(
     auto superfermionAnnihilation = computeAllSuperfermions(Keldysh::Minus, model);
 
     // Compute infinite temperature Liouvillian and current kernel
-    BlockDiagonal minusILInfty =
+    BlockDiagonalMatrix minusILInfty =
         computeLiouvillian(model) + computeSigmaInfty(superfermion, superfermionAnnihilation, model);
     _minusISigmaInfty = computeSigmaInftyCurrent(r, superfermionAnnihilation, model);
     BlockDiagonalMatrixExp piInfty(minusILInfty);
-    std::function<BlockDiagonal(Real)> computePiInfty = [&](Real t) -> BlockDiagonal
+    std::function<BlockDiagonalMatrix(Real)> computePiInfty = [&](Real t) -> BlockDiagonalMatrix
     {
         return piInfty(t);
     };
 
-    std::function<BlockDiagonal(Real)> computePiInftyM1 = [&](Real t) -> BlockDiagonal
+    std::function<BlockDiagonalMatrix(Real)> computePiInftyM1 = [&](Real t) -> BlockDiagonalMatrix
     {
         return piInfty.expm1(t);
     };

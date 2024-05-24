@@ -49,7 +49,7 @@ void MemoryKernel::initialize(
 {
     using namespace SciCore;
     using namespace RealTimeTransport;
-    using BlockDiagonal = Model::BlockDiagonalType;
+    using BlockDiagonal = BlockDiagonalMatrix;
 
     _model     = model->copy();
     _errorGoal = errorGoal;
@@ -327,7 +327,7 @@ SciCore::Real MemoryKernel::errorGoal() const noexcept
     return _errorGoal;
 }
 
-const Model::BlockDiagonalType& MemoryKernel::LInfty() const noexcept
+const BlockDiagonalMatrix& MemoryKernel::LInfty() const noexcept
 {
     return _minusILInfty;
 }
@@ -342,10 +342,10 @@ const BlockDiagonalCheb& MemoryKernel::K() const noexcept
     return _minusIK;
 }
 
-Model::BlockDiagonalType MemoryKernel::zeroFrequency() const
+BlockDiagonalMatrix MemoryKernel::zeroFrequency() const
 {
-    Model::BlockDiagonalType returnValue  = _minusILInfty;
-    returnValue                          += _minusIK.integrate()(tMax());
+    BlockDiagonalMatrix returnValue  = _minusILInfty;
+    returnValue                     += _minusIK.integrate()(tMax());
     return returnValue;
 }
 
