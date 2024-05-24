@@ -4,6 +4,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+///
+/// \file   AndersonDot.h
+///
+/// \brief  Implements the Anderson quantum dot.
+///
+
 #ifndef REAL_TIME_TRANSPORT_ANDERSON_DOT_H
 #define REAL_TIME_TRANSPORT_ANDERSON_DOT_H
 
@@ -20,16 +26,50 @@
 namespace RealTimeTransport
 {
 
-// Basis for operators: |0>, |↑>, |↓>, |↑↓> = d^\dagger_\uparrow d^\dagger_\downarrow |0>
+///
+/// \ingroup Models
+///
+/// @brief Implements an Anderson quantum dot (single level with spin).
+///
+/// This class implements the Anderson quantum dot model (single level with spin).
+/// The Hamiltonian of the quantum dot is given by
+/// \f[
+///     H = \epsilon (n_\uparrow + n_\downarrow) + \frac{B}{2}  (n_\uparrow - n_\downarrow) + U n_\uparrow n_\downarrow.
+/// \f]
+/// It is coupled to the reservoirs via the tunneling Hamiltonian
+/// \f[
+///     H_T = \sum_{r\sigma} \int d\omega \sqrt{\frac{\Gamma_{r\sigma}}{2\pi}} (a^\dagger_{r\sigma}(\omega) d + d^\dagger a_{r\sigma}(\omega)).
+/// \f]
+/// All operators are represented in the basis \f$ \ket{0}, \ket{\uparrow}, \ket{\downarrow}, \ket{\uparrow\downarrow} = d^\dagger_\uparrow d^\dagger_\downarrow \ket{0} \f$.
+///
 class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
 {
   public:
-    AndersonDot() noexcept                               = default;
-    AndersonDot(AndersonDot&& other) noexcept            = default;
-    AndersonDot(const AndersonDot& other)                = default;
-    AndersonDot& operator=(AndersonDot&& other) noexcept = default;
-    AndersonDot& operator=(const AndersonDot& other)     = default;
+    /// @brief Default constructor.
+    AndersonDot() noexcept = default;
 
+    /// @brief Default move constructor.
+    AndersonDot(AndersonDot&& other) noexcept = default;
+
+    /// @brief Default copy constructor.
+    AndersonDot(const AndersonDot& other) = default;
+
+    /// @brief Default move assignment operator.
+    AndersonDot& operator=(AndersonDot&& other) noexcept = default;
+
+    /// @brief Default copy assignment operator.
+    AndersonDot& operator=(const AndersonDot& other) = default;
+
+    ///
+    /// @brief Constructs a new Anderson dot object.
+    ///
+    /// @param epsilon  Level energy
+    /// @param B        Magnetic field
+    /// @param U        Coulomb interaction
+    /// @param T        Temperature reservoirs
+    /// @param mu       Chemical potentials reservoirs
+    /// @param Gamma    Spin-independent dot-reservoir couplings
+    ///
     AndersonDot(
         SciCore::Real epsilon,
         SciCore::Real B,
@@ -38,6 +78,17 @@ class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
         const SciCore::RealVector& mu,
         const SciCore::RealVector& Gamma);
 
+    ///
+    /// @brief Constructs a new Anderson dot object.
+    ///
+    /// @param epsilon    Level energy
+    /// @param B          Magnetic field
+    /// @param U          Coulomb interaction
+    /// @param T          Temperatures
+    /// @param mu         Chemical potentials
+    /// @param GammaUp    Dot-reservoir coupling \f$\Gamma_{r\uparrow}\f$
+    /// @param GammaDown  Dot-reservoir coupling \f$\Gamma_{r\downarrow}\f$
+    ///
     AndersonDot(
         SciCore::Real epsilon,
         SciCore::Real B,
@@ -48,12 +99,37 @@ class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
         const SciCore::RealVector& GammaDown);
 
     ///
+    /// @brief Returns the energy of the level.
+    ///
+    SciCore::Real epsilon() const noexcept;
+
+    ///
+    /// @brief Returns the magnetic field.
+    ///
+    SciCore::Real B() const noexcept;
+
+    ///
+    /// @brief Returns the Coulomb interaction.
+    ///
+    SciCore::Real U() const noexcept;
+
+    ///
+    /// @brief Returns the couplings \f$\Gamma_{r\uparrow}\f$.
+    ///
+    const SciCore::RealVector& GammaUp() const noexcept;
+
+    ///
+    /// @brief Returns the couplings \f$\Gamma_{r\downarrow}\f$.
+    ///
+    const SciCore::RealVector& GammaDown() const noexcept;
+
+    ///
     /// @brief The Hilbert space dimension is 4.
     ///
     int dimHilbertSpace() const noexcept override;
 
     ///
-    /// @brief The single particle states are ↑ and ↓, thus returns 2.
+    /// @brief The single particle states are \f$\uparrow\f$ and \f$\downarrow\f$, thus returns 2.
     ///
     int numStates() const noexcept override;
 
@@ -68,28 +144,17 @@ class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
     int numReservoirs() const override;
 
     ///
-    /// @brief Returns the Hamiltonian in the basis |0>, |↑>, |↓>, |↑↓>.
+    /// @brief Returns the Hamiltonian.
     ///
     OperatorType H() const override;
 
     ///
-    /// @brief Returns the annihilation operator of the single particle state indexed by l=up (0), down(1).
+    /// @brief Returns the annihilation operator of the single particle state indexed by \f$ l=\uparrow\equiv 0 \f$, \f$ \downarrow\equiv 1 \f$.
     ///
     OperatorType d(int l) const override;
 
-    ///
-    /// @brief Returns the coupling coefficient in the tunneling Hamiltonian. Both nu and l represent spin degrees of freedom.
-    ///
     SciCore::Complex coupling(int r, int nu, int l) const override;
-
-    ///
-    /// @brief Returns the temperatures of the reservoirs the system is connected to.
-    ///
     const SciCore::RealVector& temperatures() const noexcept override;
-
-    ///
-    /// @brief Returns the chemical potentials of the reservoirs the system is connected to.
-    ///
     const SciCore::RealVector& chemicalPotentials() const noexcept override;
 
     SupervectorType vectorize(const OperatorType& op) const override;
@@ -97,13 +162,6 @@ class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
     const std::vector<int>& blockDimensions() const noexcept override;
 
     std::unique_ptr<Model> copy() const override;
-
-    SciCore::Real epsilon() const noexcept;
-    SciCore::Real B() const noexcept;
-    SciCore::Real U() const noexcept;
-
-    const SciCore::RealVector& GammaUp() const noexcept;
-    const SciCore::RealVector& GammaDown() const noexcept;
 
     bool isEqual(const Model& other) const override;
 

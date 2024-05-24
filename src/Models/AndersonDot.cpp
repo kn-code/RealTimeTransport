@@ -37,6 +37,31 @@ AndersonDot::AndersonDot(
 {
 }
 
+SciCore::Real AndersonDot::epsilon() const noexcept
+{
+    return _epsilon;
+}
+
+SciCore::Real AndersonDot::B() const noexcept
+{
+    return _b;
+}
+
+SciCore::Real AndersonDot::U() const noexcept
+{
+    return _u;
+}
+
+const SciCore::RealVector& AndersonDot::GammaUp() const noexcept
+{
+    return _gammaUp;
+}
+
+const SciCore::RealVector& AndersonDot::GammaDown() const noexcept
+{
+    return _gammaDown;
+}
+
 int AndersonDot::dimHilbertSpace() const noexcept
 {
     return 4;
@@ -175,31 +200,6 @@ const std::vector<int>& AndersonDot::blockDimensions() const noexcept
 std::unique_ptr<Model> AndersonDot::copy() const
 {
     return std::make_unique<AndersonDot>(*this);
-}
-
-SciCore::Real AndersonDot::epsilon() const noexcept
-{
-    return _epsilon;
-}
-
-SciCore::Real AndersonDot::B() const noexcept
-{
-    return _b;
-}
-
-SciCore::Real AndersonDot::U() const noexcept
-{
-    return _u;
-}
-
-const SciCore::RealVector& AndersonDot::GammaUp() const noexcept
-{
-    return _gammaUp;
-}
-
-const SciCore::RealVector& AndersonDot::GammaDown() const noexcept
-{
-    return _gammaDown;
 }
 
 bool AndersonDot::isEqual(const Model& other) const

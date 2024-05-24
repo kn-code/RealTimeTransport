@@ -4,6 +4,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+///
+/// \file   ResonantLevel.h
+///
+/// \brief  Implements a spinless level without spin.
+///
+
 #ifndef REAL_TIME_TRANSPORT_RESONANT_LEVEL_H
 #define REAL_TIME_TRANSPORT_RESONANT_LEVEL_H
 
@@ -21,23 +27,57 @@ namespace RealTimeTransport
 {
 
 ///
-/// @brief Single level without spin.
+/// \ingroup Models
+///
+/// @brief Implements a single level without spin.
+///
+/// This class implements a single spinless level.
+/// The Hamiltonian is given by
+/// \f[
+///     H = \epsilon n,
+/// \f]
+/// where \f$ n=d^\dagger d \f$. It is coupled to the reservoirs via the tunneling Hamiltonian
+/// \f[
+///     H_T = \sum_{r} \int d\omega \sqrt{\frac{\Gamma_{r}}{2\pi}} (a^\dagger_{r}(\omega) d + d^\dagger a_{r}(\omega)).
+/// \f]
+/// All operators are represented in the basis \f$ \ket{0}, \ket{1} \f$.
 ///
 class REALTIMETRANSPORT_EXPORT ResonantLevel final : public Model
 {
-    // Basis for operators: |0>, |1>
   public:
-    ResonantLevel() noexcept                                 = default;
-    ResonantLevel(ResonantLevel&& other) noexcept            = default;
-    ResonantLevel(const ResonantLevel& other)                = default;
-    ResonantLevel& operator=(ResonantLevel&& other) noexcept = default;
-    ResonantLevel& operator=(const ResonantLevel& other)     = default;
+    /// @brief Default constructor.
+    ResonantLevel() noexcept = default;
 
+    /// @brief Default move constructor.
+    ResonantLevel(ResonantLevel&& other) noexcept = default;
+
+    /// @brief Default copy constructor.
+    ResonantLevel(const ResonantLevel& other) = default;
+
+    /// @brief Default move assignment operator.
+    ResonantLevel& operator=(ResonantLevel&& other) noexcept = default;
+
+    /// @brief Default copy assignment operator.
+    ResonantLevel& operator=(const ResonantLevel& other) = default;
+
+    ///
+    /// @brief  Constructs a new ResonantLevel object.
+    ///
+    /// @param epsilon  Level energy
+    /// @param T        Temperature reservoirs
+    /// @param mu       Chemical potentials reservoirs
+    /// @param Gamma    Dot-reservoir coupling
+    ///
     ResonantLevel(
         SciCore::Real epsilon,
         const SciCore::RealVector& T,
         const SciCore::RealVector& mu,
         const SciCore::RealVector& Gamma);
+
+    ///
+    /// @brief Returns the energy of the level.
+    ///
+    SciCore::Real epsilon() const noexcept;
 
     ///
     /// @brief The Hilbert space dimension is 2 (empty and full state).
@@ -48,7 +88,7 @@ class REALTIMETRANSPORT_EXPORT ResonantLevel final : public Model
     }
 
     ///
-    /// @brief Only one single particle state
+    /// @brief Only one single particle state.
     ///
     int numStates() const noexcept override
     {
@@ -81,36 +121,18 @@ class REALTIMETRANSPORT_EXPORT ResonantLevel final : public Model
         return _epsilon * n;
     }
 
-    SciCore::Real epsilon() const noexcept
-    {
-        return _epsilon;
-    }
-
     ///
-    /// @brief Returns the annihilation operator of the single particle state indexed by l=down, up.
+    /// @brief Returns the annihilation operator. \f$l\f$ is always 0.
     ///
     OperatorType d(int l) const override;
 
     ///
-    /// @brief Returns the coupling coefficient in the tunneling Hamiltonian. Both nu and l are always 0.
+    /// @brief Returns the coupling coefficient in the tunneling Hamiltonian. Both \f$\nu\f$ and \f$l\f$ are always 0.
     ///
     SciCore::Complex coupling(int r, int nu, int l) const override;
 
-    ///
-    /// @brief Returns the temperatures of the reservoirs the system is connected to.
-    ///
-    const SciCore::RealVector& temperatures() const noexcept override
-    {
-        return _temperatures;
-    }
-
-    ///
-    /// @brief Returns the chemical potentials of the reservoirs the system is connected to.
-    ///
-    const SciCore::RealVector& chemicalPotentials() const noexcept override
-    {
-        return _chemicalPotentials;
-    }
+    const SciCore::RealVector& temperatures() const noexcept override;
+    const SciCore::RealVector& chemicalPotentials() const noexcept override;
 
     SupervectorType vectorize(const OperatorType& op) const override;
     OperatorType operatorize(const SupervectorType& supervector) const override;
@@ -118,12 +140,7 @@ class REALTIMETRANSPORT_EXPORT ResonantLevel final : public Model
 
     std::unique_ptr<Model> copy() const override;
 
-    bool isEqual(const Model& other) const override
-    {
-        const ResonantLevel& rhs = dynamic_cast<const ResonantLevel&>(other);
-        return (_epsilon == rhs._epsilon) && (_temperatures == rhs._temperatures) &&
-               (_chemicalPotentials == rhs._chemicalPotentials) && (_gamma == rhs._gamma);
-    }
+    bool isEqual(const Model& other) const override;
 
     template <class Archive>
     void serialize(Archive& archive)

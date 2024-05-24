@@ -4,6 +4,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+///
+/// \file   Model.h
+///
+/// \brief  Generic model interface.
+///
+
 #ifndef REAL_TIME_TRANSPORT_MODEL_H
 #define REAL_TIME_TRANSPORT_MODEL_H
 
@@ -20,7 +26,19 @@ namespace RealTimeTransport
 {
 
 ///
-/// @brief Abstract class representing a Model.
+///  \defgroup Models Models
+///
+///  \brief Contains classes and methods related to the implementation of different models.
+///
+///  This page describes classes and methods related to the implementation of different models.
+///
+///  \{
+///
+
+///
+/// @brief Abstract class representing a model.
+///
+/// This class defines the abstract interface from which all models need to inherit.
 ///
 class REALTIMETRANSPORT_EXPORT Model
 {
@@ -43,7 +61,14 @@ class REALTIMETRANSPORT_EXPORT Model
     Model() noexcept;
     virtual ~Model() noexcept;
 
+    ///
+    /// @brief  Equality comparison operator
+    ///
     bool operator==(const Model& other) const;
+
+    ///
+    /// @brief  Inequality comparison operator
+    ///
     bool operator!=(const Model& other) const;
 
     ///
@@ -82,7 +107,7 @@ class REALTIMETRANSPORT_EXPORT Model
     virtual OperatorType d(int l) const = 0;
 
     ///
-    /// @brief Returns the coupling coefficient in the tunneling Hamiltonian, given by \f$\sqrt{\rho}_{r \nu} t_{r \nu l}\f$.
+    /// @brief Returns the coupling coefficient in the tunneling Hamiltonian, given by \f$\sqrt{\lambda}_{r \nu} t_{r \nu l}\f$.
     ///
     virtual SciCore::Complex coupling(int r, int nu, int l) const = 0;
 
@@ -123,12 +148,19 @@ class REALTIMETRANSPORT_EXPORT Model
     virtual bool isEqual(const Model& other) const = 0;
 };
 
+///
+/// @brief Creates and returns a memory managed Model object.
+///
+/// @param params   List of parameters to pass to the constructor.
+///
 template <typename ConcreteModelType, typename... Params>
     requires std::is_base_of_v<Model, ConcreteModelType>
 std::unique_ptr<Model> createModel(Params&&... params)
 {
     return std::make_unique<ConcreteModelType>(std::forward<Params>(params)...);
 }
+
+/// \} // end of Models
 
 } // namespace RealTimeTransport
 

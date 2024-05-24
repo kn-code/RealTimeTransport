@@ -22,6 +22,11 @@ ResonantLevel::ResonantLevel(
 {
 }
 
+SciCore::Real ResonantLevel::epsilon() const noexcept
+{
+    return _epsilon;
+}
+
 // Basis |0>, |1>
 ResonantLevel::OperatorType ResonantLevel::d(int) const
 {
@@ -37,6 +42,16 @@ SciCore::Complex ResonantLevel::coupling(int r, int, int) const
 
     const Real pi = std::numbers::pi_v<Real>;
     return std::sqrt(_gamma[r] / (2 * pi));
+}
+
+const SciCore::RealVector& ResonantLevel::temperatures() const noexcept
+{
+    return _temperatures;
+}
+
+const SciCore::RealVector& ResonantLevel::chemicalPotentials() const noexcept
+{
+    return _chemicalPotentials;
 }
 
 Model::SupervectorType ResonantLevel::vectorize(const Model::OperatorType& op) const
@@ -68,6 +83,13 @@ const std::vector<int>& ResonantLevel::blockDimensions() const noexcept
 std::unique_ptr<Model> ResonantLevel::copy() const
 {
     return std::make_unique<ResonantLevel>(_epsilon, _temperatures, _chemicalPotentials, _gamma);
+}
+
+bool ResonantLevel::isEqual(const Model& other) const
+{
+    const ResonantLevel& rhs = dynamic_cast<const ResonantLevel&>(other);
+    return (_epsilon == rhs._epsilon) && (_temperatures == rhs._temperatures) &&
+           (_chemicalPotentials == rhs._chemicalPotentials) && (_gamma == rhs._gamma);
 }
 
 } // namespace RealTimeTransport
