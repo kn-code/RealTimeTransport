@@ -23,7 +23,7 @@ namespace RealTimeTransport::IteratedRG::Detail
 //  t    τ_1   τ_2    s
 //  i3    i1    i2  \bar{i3}
 //
-BlockVector<SciCore::Complex> bareTwoPointVertex_col(
+BlockVector bareTwoPointVertex_col(
     int i1,
     int i2,
     int col,
@@ -43,12 +43,12 @@ BlockVector<SciCore::Complex> bareTwoPointVertex_col(
     assert(tau1_minus_tau2 >= 0);
     assert(tau2_minus_s >= 0);
 
-    BlockVector<Complex> result;
+    BlockVector result;
 
     int numStates = model->numStates();
 
     // dressed_i1 = Pi1 * superfermion[i1] * Pi2
-    BlockMatrix<Complex> dressed_i1 = superfermion[i1];
+    BlockMatrix dressed_i1 = superfermion[i1];
     productCombination_1(Pi1, dressed_i1, Pi2);
 
     for (int eta3 = 0; eta3 <= 1; ++eta3)
@@ -86,20 +86,20 @@ BlockVector<SciCore::Complex> bareTwoPointVertex_col(
 //  i2    i1  \bar{i2}
 //
 // Computes the column col of the above diagram with middle index i1
-BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
+BlockVector effectiveVertexCorrection1_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
     using BlockDiagonal = BlockDiagonalMatrix;
-    using MatrixType    = BlockVector<Complex>::MatrixType;
+    using MatrixType    = BlockVector::MatrixType;
 
     assert(t_minus_tau > 0);
     assert(tau > 0);
@@ -107,7 +107,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
     // The return value represents the column col of the above diagram with middle index i1.
     // Here we assume that if a block of superfermion[i1] is zero, it also follows that
     // the corresponding block of the effective vertex i1 is zero. Might be not true for fancy models (?)
-    BlockVector<Complex> result;
+    BlockVector result;
     for (int row = 0; row < superfermion[i1].numBlocks(); ++row)
     {
         auto it = superfermion[i1].find(row, col);
@@ -141,7 +141,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
                 BlockDiagonal Pi_t_minus_tau  = computePi(t_minus_tau);
                 BlockDiagonal Pi_tau_minus_t1 = computePi(tau - t1);
 
-                BlockMatrix<Complex> middle = superfermion[i1];
+                BlockMatrix middle = superfermion[i1];
                 productCombination_1(Pi_t_minus_tau, middle, Pi_tau_minus_t1);
 
                 for (int eta2 = 0; eta2 <= 1; ++eta2)
@@ -158,7 +158,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
 
                             if (prefactor != 0.0)
                             {
-                                BlockVector<SciCore::Complex> Geff_i2Bar = computeD_col(i2Bar, col, t1 - t2, t2);
+                                BlockVector Geff_i2Bar = computeD_col(i2Bar, col, t1 - t2, t2);
                                 addProduct(rowIndex, prefactor, superfermion[i2], middle, Geff_i2Bar, integrand);
                             }
                         }
@@ -184,20 +184,20 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
 //  i2    i1  \bar{i2}
 //
 // Computes the column col of the above diagram with middle index i1
-BlockVector<SciCore::Complex> effectiveVertexCorrection2_col(
+BlockVector effectiveVertexCorrection2_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
     using BlockDiagonal = BlockDiagonalMatrix;
-    using MatrixType    = BlockVector<Complex>::MatrixType;
+    using MatrixType    = BlockVector::MatrixType;
 
     assert(t_minus_tau > 0);
     assert(tau > 0);
@@ -205,7 +205,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection2_col(
     // The return value represents the column col of the above diagram with middle index i1.
     // Here we assume that if a block of superfermion[i1] is zero, it also follows that
     // the corresponding block of the effective vertex i1 is zero. Might be not true for fancy models (?)
-    BlockVector<Complex> result;
+    BlockVector result;
     for (int row = 0; row < superfermion[i1].numBlocks(); ++row)
     {
         auto it = superfermion[i1].find(row, col);
@@ -283,7 +283,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection2_col(
 //  t            τ
 //  i2       \bar{i2},i1
 //
-BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
+BlockVector effectiveVertexCorrection3_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
@@ -295,7 +295,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
 {
     using namespace SciCore;
     using BlockDiagonal = BlockDiagonalMatrix;
-    using MatrixType    = BlockVector<Complex>::MatrixType;
+    using MatrixType    = BlockVector::MatrixType;
 
     assert(t_minus_tau > 0);
     assert(tau > 0);
@@ -303,7 +303,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
     // The return value represents the column col of the above diagram with free index i1.
     // Here we assume that if a block of superfermion[i1] is zero, it also follows that
     // the corresponding block of the effective vertex i1 is zero. Might be not true for fancy models (?)
-    BlockVector<Complex> result;
+    BlockVector result;
     for (int row = 0; row < superfermion[i1].numBlocks(); ++row)
     {
         auto it = superfermion[i1].find(row, col);
@@ -356,7 +356,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
 
                             if (prefactor != 0.0)
                             {
-                                BlockVector<SciCore::Complex> D2_col = bareTwoPointVertex_col(
+                                BlockVector D2_col = bareTwoPointVertex_col(
                                     i2Bar, i1, col, t1 - t2, t2 - tau, tau, Pi_t1_minus_t2, Pi_t2_minus_tau, Pi_tau,
                                     epsAbs, superfermion, model);
 
@@ -384,7 +384,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
 //  t           τ
 //  i2        i1,\bar{i2}
 //
-BlockVector<SciCore::Complex> effectiveVertexCorrection4_col(
+BlockVector effectiveVertexCorrection4_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
@@ -396,7 +396,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection4_col(
 {
     using namespace SciCore;
     using BlockDiagonal = BlockDiagonalMatrix;
-    using MatrixType    = BlockVector<Complex>::MatrixType;
+    using MatrixType    = BlockVector::MatrixType;
 
     assert(t_minus_tau > 0);
     assert(tau > 0);
@@ -404,7 +404,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection4_col(
     // The return value represents the column col of the above diagram with free index i1.
     // Here we assume that if a block of superfermion[i1] is zero, it also follows that
     // the corresponding block of the effective vertex i1 is zero. Might be not true for fancy models (?)
-    BlockVector<Complex> result;
+    BlockVector result;
     for (int row = 0; row < superfermion[i1].numBlocks(); ++row)
     {
         auto it = superfermion[i1].find(row, col);
@@ -455,7 +455,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection4_col(
 
                             if (prefactor != 0.0)
                             {
-                                BlockVector<SciCore::Complex> D2_col = bareTwoPointVertex_col(
+                                BlockVector D2_col = bareTwoPointVertex_col(
                                     i1, i2Bar, col, t1 - tau, tau - t2, t2, Pi_t1_minus_tau, Pi_tau_minus_t2, Pi_t2,
                                     epsAbs, superfermion, model);
 

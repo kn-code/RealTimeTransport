@@ -40,8 +40,8 @@ TEST(addProduct, BlockMatrix_BlockMatrix_toDiagonal)
 
     denseResult += 2.0 * A * B;
 
-    BlockMatrix<Complex> blockA(A, blockDims);
-    BlockMatrix<Complex> blockB(B, blockDims);
+    BlockMatrix blockA(A, blockDims);
+    BlockMatrix blockB(B, blockDims);
 
     addProduct(2.0, blockA, blockB, blockResult);
 
@@ -66,8 +66,8 @@ TEST(addProduct, BlockMatrix_BlockMatrix_toDiagonal_2)
 
     denseResult += 2.0 * A * B;
 
-    BlockMatrix<Complex> blockA(A, blockDims);
-    BlockMatrix<Complex> blockB(B, blockDims);
+    BlockMatrix blockA(A, blockDims);
+    BlockMatrix blockB(B, blockDims);
 
     addProduct(2.0, blockA, blockB, blockResult);
 
@@ -99,9 +99,9 @@ TEST(addProduct, MatrixElement_BlockMatrix_BlockMatrix_BlockMatrix)
     denseResult        += 2.0 * A * B * C;
 
     std::vector<int> blockDims = {2, 2};
-    BlockMatrix<Complex> blockA(A, blockDims);
-    BlockMatrix<Complex> blockB(B, blockDims);
-    BlockMatrix<Complex> blockC(C, blockDims);
+    BlockMatrix blockA(A, blockDims);
+    BlockMatrix blockB(B, blockDims);
+    BlockMatrix blockC(C, blockDims);
 
     Matrix blockResult{
         {3, -4},
@@ -156,11 +156,11 @@ TEST(addProduct_col, BlockMatrix_BlockDiagonal_BlockMatrix)
     result        += 2.0 * A1 * D * A2;
 
     std::vector<int> blockDims = {2, 3, 1};
-    BlockMatrix<Complex> blockA1(A1, blockDims);
+    BlockMatrix blockA1(A1, blockDims);
     BlockDiagonalMatrix blockD(D, blockDims);
-    BlockMatrix<Complex> blockA2(A2, blockDims);
+    BlockMatrix blockA2(A2, blockDims);
 
-    BlockVector<Complex> resultBlock;
+    BlockVector resultBlock;
     resultBlock.emplace(
         0, Matrix{
                { 1, 4},
@@ -201,18 +201,18 @@ TEST(addProduct_col_unsafe, BlockMatrix_BlockMatrix_BlockMatrix)
     denseResult        += 2.0 * A * B * C;
 
     std::vector<int> blockDims = {2, 2};
-    BlockMatrix<Complex> blockA(A, blockDims);
-    BlockMatrix<Complex> blockB(B, blockDims);
-    BlockMatrix<Complex> blockC(C, blockDims);
+    BlockMatrix blockA(A, blockDims);
+    BlockMatrix blockB(B, blockDims);
+    BlockMatrix blockC(C, blockDims);
 
     {
-        BlockVector<Complex> result;
+        BlockVector result;
         addProduct_col_unsafe(0, 2.0, blockA, blockB, blockC, result);
         EXPECT_EQ(result.size(), 0);
     }
 
     {
-        BlockVector<Complex> result;
+        BlockVector result;
         result.emplace(
             0, Matrix{
                    {3, -4},
@@ -225,7 +225,7 @@ TEST(addProduct_col_unsafe, BlockMatrix_BlockMatrix_BlockMatrix)
     }
 
     {
-        BlockVector<Complex> result;
+        BlockVector result;
         result.emplace(
             1, Matrix{
                    {7, 8},
@@ -238,7 +238,7 @@ TEST(addProduct_col_unsafe, BlockMatrix_BlockMatrix_BlockMatrix)
     }
 
     {
-        BlockVector<Complex> result;
+        BlockVector result;
         result.emplace(
             0, Matrix{
                    {0, 0},
@@ -265,16 +265,16 @@ TEST(product, BlockMatrix_BlockMatrix_BlockMatrix_1)
     const Matrix C = Matrix::Random(64, 64);
 
     std::vector<int> blockDims = {16, 16, 8, 16, 8};
-    const BlockMatrix<Complex> blockA(A, blockDims);
-    const BlockMatrix<Complex> blockB(B, blockDims);
-    const BlockMatrix<Complex> blockC(C, blockDims);
+    const BlockMatrix blockA(A, blockDims);
+    const BlockMatrix blockB(B, blockDims);
+    const BlockMatrix blockC(C, blockDims);
 
     EXPECT_EQ(blockA.toDense(), A);
     EXPECT_EQ(blockB.toDense(), B);
     EXPECT_EQ(blockC.toDense(), C);
 
-    Matrix denseResult               = 2.0 * A * B * C;
-    BlockMatrix<Complex> blockResult = product(2.0, blockA, blockB, blockC);
+    Matrix denseResult      = 2.0 * A * B * C;
+    BlockMatrix blockResult = product(2.0, blockA, blockB, blockC);
     EXPECT_TRUE(denseResult.isApprox(blockResult.toDense()));
 }
 
@@ -299,16 +299,16 @@ TEST(product, BlockMatrix_BlockMatrix_BlockMatrix_2)
     const Matrix C = A;
 
     std::vector<int> blockDims = {2, 3, 1};
-    const BlockMatrix<Complex> blockA(A, blockDims);
-    const BlockMatrix<Complex> blockB(B, blockDims);
-    const BlockMatrix<Complex> blockC(C, blockDims);
+    const BlockMatrix blockA(A, blockDims);
+    const BlockMatrix blockB(B, blockDims);
+    const BlockMatrix blockC(C, blockDims);
 
     EXPECT_EQ(blockA.toDense(), A);
     EXPECT_EQ(blockB.toDense(), B);
     EXPECT_EQ(blockC.toDense(), C);
 
-    Matrix denseResult               = 2.0 * A * B * C;
-    BlockMatrix<Complex> blockResult = product(2.0, blockA, blockB, blockC);
+    Matrix denseResult      = 2.0 * A * B * C;
+    BlockMatrix blockResult = product(2.0, blockA, blockB, blockC);
     EXPECT_TRUE(denseResult.isApprox(blockResult.toDense())) << "denseResult =\n"
                                                              << denseResult << "\nblockResult =\n"
                                                              << blockResult.toDense();
@@ -344,8 +344,8 @@ TEST(addProduct, BlockMatrix_BlockDiagonal_BlockMatrix)
     Matrix A1dense = Matrix::Random(totalDim, totalDim);
     Matrix A2dense = Matrix::Random(totalDim, totalDim);
 
-    BlockMatrix<Complex> A1(A1dense, blockDims);
-    BlockMatrix<Complex> A2(A2dense, blockDims);
+    BlockMatrix A1(A1dense, blockDims);
+    BlockMatrix A2(A2dense, blockDims);
 
     Matrix denseResult  = Matrix::Constant(totalDim, totalDim, 1.0);
     denseResult        += 2.0 * A1dense * Bdense * A2dense;
@@ -416,7 +416,7 @@ TEST(addProduct, RowVector_BlockDiagonal_BlockMatrix)
     };
 
     std::vector<int> blockDims = {2, 3, 1};
-    const BlockMatrix<Complex> blockA(A, blockDims);
+    const BlockMatrix blockA(A, blockDims);
     const BlockDiagonalMatrix blockD(D, blockDims);
 
     std::vector<int> blockStartIndices(blockDims.size(), 0);
@@ -459,9 +459,9 @@ TEST(addProduct, MatrixElement_BlockMatrix_BlockMatrix_BlockVector)
     denseResult        += 2.0 * A * B * C;
 
     std::vector<int> blockDims = {2, 2};
-    BlockMatrix<Complex> blockA(A, blockDims);
-    BlockMatrix<Complex> blockB(B, blockDims);
-    BlockVector<Complex> x;
+    BlockMatrix blockA(A, blockDims);
+    BlockMatrix blockB(B, blockDims);
+    BlockVector x;
     x.emplace(
         0, Matrix{
                {3, -4},
@@ -501,16 +501,16 @@ TEST(addProduct, MatrixElement_BlockMatrix_BlockMatrix_BlockVector)
     BlockDiagonalMatrix D1(std::vector<Matrix>{blocks1});
     BlockDiagonalMatrix D2(std::vector<Matrix>{blocks2});
 
-    BlockMatrix<Complex>::UnorderedElementMap elements{
+    BlockMatrix::UnorderedElementMap elements{
         {{0, 1}, Matrix::Random(blockDims[0], blockDims[1])},
         {{3, 2}, Matrix::Random(blockDims[3], blockDims[2])},
         {{4, 6}, Matrix::Random(blockDims[4], blockDims[6])}
     };
 
-    BlockMatrix<Complex> A(std::move(elements), blockDims);
+    BlockMatrix A(std::move(elements), blockDims);
 
     Matrix denseResult               = 2.0 * D1.toDense() * A.toDense() * D2.toDense();
-    BlockMatrix<Complex> blockResult = product(2.0, D1, A, D2);
+    BlockMatrix blockResult = product(2.0, D1, A, D2);
 
     EXPECT_TRUE(denseResult.isApprox(blockResult.toDense()));
 }*/
@@ -531,11 +531,11 @@ TEST(addProduct, MatrixElement_BlockMatrix_BlockMatrix_BlockVector)
     };
 
     std::vector<int> blockDims = {2, 2};
-    const BlockMatrix<Complex> blockA(A, blockDims);
-    const BlockMatrix<Complex> blockB(B, blockDims);
+    const BlockMatrix blockA(A, blockDims);
+    const BlockMatrix blockB(B, blockDims);
 
     Matrix denseResult               = 2.0 * A * B;
-    BlockMatrix<Complex> blockResult = product(2.0, blockA, blockB);
+    BlockMatrix blockResult = product(2.0, blockA, blockB);
     EXPECT_TRUE(denseResult.isApprox(blockResult.toDense()));
 
     denseResult = 2.0 * B * A;
@@ -565,14 +565,14 @@ TEST(product, BlockMatrix_BlockMatrix_2)
     };
 
     std::vector<int> blockDims = {2, 3, 1};
-    const BlockMatrix<Complex> blockA(A, blockDims);
-    const BlockMatrix<Complex> blockB(B, blockDims);
+    const BlockMatrix blockA(A, blockDims);
+    const BlockMatrix blockB(B, blockDims);
 
     EXPECT_EQ(blockA.toDense(), A);
     EXPECT_EQ(blockB.toDense(), B);
 
     Matrix denseResult               = 2.0 * A * B;
-    BlockMatrix<Complex> blockResult = product(2.0, blockA, blockB);
+    BlockMatrix blockResult = product(2.0, blockA, blockB);
     EXPECT_TRUE(denseResult.isApprox(blockResult.toDense())) << "denseResult =\n"
                                                              << denseResult << "\nblockResult =\n"
                                                              << blockResult.toDense();
@@ -590,14 +590,14 @@ TEST(product, BlockMatrix_BlockMatrix_3)
     const Matrix B = Matrix::Random(128, 128);
 
     std::vector<int> blockDims = {32, 16, 64, 16};
-    const BlockMatrix<Complex> blockA(A, blockDims);
-    const BlockMatrix<Complex> blockB(B, blockDims);
+    const BlockMatrix blockA(A, blockDims);
+    const BlockMatrix blockB(B, blockDims);
 
     EXPECT_EQ(blockA.toDense(), A);
     EXPECT_EQ(blockB.toDense(), B);
 
     Matrix denseResult               = 2.0 * A * B;
-    BlockMatrix<Complex> blockResult = product(2.0, blockA, blockB);
+    BlockMatrix blockResult = product(2.0, blockA, blockB);
     EXPECT_TRUE(denseResult.isApprox(blockResult.toDense()));
 
     denseResult = 2.0 * B * A;
@@ -628,9 +628,9 @@ TEST(product, BlockMatrix_BlockMatrix_4)
     };
 
     std::vector<int> blockDims = {4, 1, 1, 1, 1, 2, 2, 2, 2};
-    const BlockMatrix<Complex> blockA(A, blockDims);
+    const BlockMatrix blockA(A, blockDims);
 
-    BlockMatrix<Complex> blockResult = product(2.0, blockA, blockA);
+    BlockMatrix blockResult = product(2.0, blockA, blockA);
     EXPECT_EQ(blockResult.size(), 0);
     EXPECT_EQ(blockResult.toDense(), Matrix::Zero(16, 16));
 }*/

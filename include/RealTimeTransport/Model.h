@@ -62,7 +62,7 @@ class REALTIMETRANSPORT_EXPORT Model
     using SuperoperatorType = SciCore::Matrix;
 
     /// @brief Type representing superfermions.
-    using SuperfermionType = BlockMatrix<SciCore::Complex>;
+    using SuperfermionType = BlockMatrix;
 
     Model() noexcept;
     virtual ~Model() noexcept;

@@ -15,7 +15,7 @@ using namespace RealTimeTransport;
 
 TEST(BlockVector, operatorPlus)
 {
-    BlockVector<Complex> x;
+    BlockVector x;
     x.emplace(
         0, Matrix{
                { 1, 4},
@@ -32,7 +32,7 @@ TEST(BlockVector, operatorPlus)
                {3, 4}
     });
 
-    BlockVector<Complex> y;
+    BlockVector y;
     y.emplace(
         0, Matrix{
                {2, 8},

@@ -205,8 +205,7 @@ void CurrentKernel::_initialize(
             throw Error(ss.str());
         }
 
-        std::function<BlockVector<SciCore::Complex>(int, int, Real, Real)> computeD =
-            [&](int i, int col, Real t, Real s) -> BlockVector<SciCore::Complex>
+        std::function<BlockVector(int, int, Real, Real)> computeD = [&](int i, int col, Real t, Real s) -> BlockVector
         {
             return Detail::effectiveVertexDiagram1_col(
                 i, col, t, s, tCrit, safety * epsAbs, computePiInfty, computePiInftyM1, superfermion, model);

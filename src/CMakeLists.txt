@@ -42,6 +42,8 @@ add_library(RealTimeTransport SHARED
     BlockMatrices/BlockDiagonalMatrix.cpp
     BlockMatrices/BlockMatrix.cpp
     BlockMatrices/MatrixExp.cpp
+    BlockMatrices/MatrixOperations.cpp
+    BlockMatrices/BlockVector.cpp
     ${HEADER_LIST})
 add_library(RealTimeTransport::RealTimeTransport ALIAS RealTimeTransport)
 

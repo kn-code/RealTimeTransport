@@ -124,14 +124,14 @@ class REALTIMETRANSPORT_EXPORT MemoryKernel
         const std::vector<SciCore::RealVector>* initialChebSections);
 
     // Returns the effective vertex (without delta singular part) of order D^3 + D^5
-    BlockVector<SciCore::Complex> _computeD_O3_O5_col(
+    BlockVector _computeD_O3_O5_col(
         int i,
         int col,
         SciCore::Real t_minus_tau,
         SciCore::Real tau_minus_s,
         SciCore::Real epsAbs,
         const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-        const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
+        const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
         const std::vector<Model::SuperfermionType>& superfermion);
 };
 

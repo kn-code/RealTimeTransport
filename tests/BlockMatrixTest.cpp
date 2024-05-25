@@ -24,13 +24,13 @@ TEST(BlockMatrix, fromUnorderedMap)
     };
 
     std::vector<int> blockDims = {2, 2, 1};
-    BlockMatrix<Complex>::UnorderedElementMap elements{
+    BlockMatrix::UnorderedElementMap elements{
         {{0, 1}, Matrix{{1, 2}, {3, 4}}},
         {{2, 0},         Matrix{{5, 6}}}
     };
 
     // Create a BlockMatrix from triplets
-    BlockMatrix<Complex> A(std::move(elements), blockDims);
+    BlockMatrix A(std::move(elements), blockDims);
     EXPECT_EQ(A.size(), 2);
 
     // Check if the original and converted matrices are equal
@@ -44,7 +44,7 @@ TEST(BlockMatrix, ConvertToAndFromDense)
     std::vector<int> blockDims = {2, 4, 1, 3, 2};
 
     // Create a BlockMatrix from the dense matrix
-    BlockMatrix<Complex> A(originalMatrix, blockDims);
+    BlockMatrix A(originalMatrix, blockDims);
     EXPECT_EQ(A.size(), blockDims.size() * blockDims.size());
 
     // Convert back to a dense matrix
@@ -66,7 +66,7 @@ TEST(addProduct, BlockMatrix_Vector)
     };
 
     std::vector<int> blockDims = {2, 3, 1};
-    const BlockMatrix<Complex> blockA(A, blockDims);
+    const BlockMatrix blockA(A, blockDims);
 
     std::vector<int> blockStartIndices(blockDims.size(), 0);
     for (size_t i = 1; i < blockDims.size(); ++i)
@@ -99,7 +99,7 @@ TEST(addProduct, RowVector_BlockMatrix)
     };
 
     std::vector<int> blockDims = {2, 3, 1};
-    const BlockMatrix<Complex> blockA(A, blockDims);
+    const BlockMatrix blockA(A, blockDims);
 
     std::vector<int> blockStartIndices(blockDims.size(), 0);
     for (size_t i = 1; i < blockDims.size(); ++i)

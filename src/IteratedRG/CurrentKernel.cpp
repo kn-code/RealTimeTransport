@@ -153,23 +153,23 @@ void CurrentKernel::_initialize(
         throw Error(ss.str());
     }
 
-    std::function<BlockVector<Complex>(int, int, Real, Real)> computeD_O3_col = [&](int i, int col, Real t,
-                                                                                    Real s) -> BlockVector<Complex>
+    std::function<BlockVector(int, int, Real, Real)> computeD_O3_col = [&](int i, int col, Real t,
+                                                                           Real s) -> BlockVector
     {
         return RenormalizedPT::Detail::effectiveVertexDiagram1_col(
             i, col, t, s, tCrit, safety * epsAbs, computePi, computePiM1, superfermion, _model.get());
     };
 
-    std::function<BlockVector<Complex>(int, int, Real, Real)> computeD_col;
+    std::function<BlockVector(int, int, Real, Real)> computeD_col;
     if (order == Order::_2)
     {
         computeD_col = computeD_O3_col;
     }
     else if (order == Order::_3)
     {
-        computeD_col = [&](int i, int col, Real t, Real s) -> BlockVector<Complex>
+        computeD_col = [&](int i, int col, Real t, Real s) -> BlockVector
         {
-            BlockVector<Complex> returnValue = computeD_O3_col(i, col, t, s);
+            BlockVector returnValue = computeD_O3_col(i, col, t, s);
 
             returnValue += Detail::effectiveVertexCorrection1_col(
                 i, col, t, s, epsAbs, computePi, computeD_O3_col, superfermion, _model.get());

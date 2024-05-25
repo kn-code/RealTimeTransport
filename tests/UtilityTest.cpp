@@ -443,10 +443,10 @@ TEST(superfermionsInResonantLevel, Test)
     //
     // Check superfermions
     //
-    BlockMatrix<Complex> Gpm_computed = computeSuperfermion(Keldysh::Plus, Eta::Minus, 0, model);
-    BlockMatrix<Complex> Gpp_computed = computeSuperfermion(Keldysh::Plus, Eta::Plus, 0, model);
-    BlockMatrix<Complex> Gmp_computed = computeSuperfermion(Keldysh::Minus, Eta::Plus, 0, model);
-    BlockMatrix<Complex> Gmm_computed = computeSuperfermion(Keldysh::Minus, Eta::Minus, 0, model);
+    BlockMatrix Gpm_computed = computeSuperfermion(Keldysh::Plus, Eta::Minus, 0, model);
+    BlockMatrix Gpp_computed = computeSuperfermion(Keldysh::Plus, Eta::Plus, 0, model);
+    BlockMatrix Gmp_computed = computeSuperfermion(Keldysh::Minus, Eta::Plus, 0, model);
+    BlockMatrix Gmm_computed = computeSuperfermion(Keldysh::Minus, Eta::Minus, 0, model);
 
     EXPECT_EQ(Gpm, Gpm_computed.toDense());
     EXPECT_EQ(Gpp, Gpp_computed.toDense());

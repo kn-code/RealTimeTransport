@@ -125,7 +125,7 @@ SciCore::Matrix diagram_1(
 //  i2    i1  \bar{i2}
 //
 // Computes the column col of the above diagram with middle index i1
-BlockVector<SciCore::Complex> effectiveVertexDiagram1_col(
+BlockVector effectiveVertexDiagram1_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
@@ -149,7 +149,7 @@ BlockVector<SciCore::Complex> effectiveVertexDiagram1_col(
     // The return value result represents the column col of the effective vertex i1.
     // Here we assume that if a block of superfermion[i1] is zero, it also follows that
     // the corresponding block result is zero. Might be not true for fancy models (?)
-    BlockVector<Complex> result;
+    BlockVector result;
     for (int row = 0; row < superfermion[i1].numBlocks(); ++row)
     {
         auto it = superfermion[i1].find(row, col);
@@ -165,7 +165,7 @@ BlockVector<SciCore::Complex> effectiveVertexDiagram1_col(
     BlockDiagonal Pi1 = (t_minus_tau == 0) ? BlockDiagonal::Identity(blockDims) : computePi(t_minus_tau);
     BlockDiagonal Pi2 = (tau_minus_s == 0) ? BlockDiagonal::Identity(blockDims) : computePi(tau_minus_s);
 
-    BlockMatrix<Complex> middle = superfermion[i1];
+    BlockMatrix middle = superfermion[i1];
     productCombination_1(Pi1, middle, Pi2);
 
     for (int eta2 = 0; eta2 <= 1; ++eta2)
@@ -195,7 +195,7 @@ BlockVector<SciCore::Complex> effectiveVertexDiagram1_col(
             (tau_minus_s == 0) ? BlockDiagonal::Zero(blockDims) : computePiMinusOne(tau_minus_s);
         BlockDiagonal gammaGG = computeGammaGG(t_minus_tau + tau_minus_s, superfermion, model);
 
-        BlockMatrix<Complex> middle = superfermion[i1];
+        BlockMatrix middle = superfermion[i1];
         productCombination_2(PiMinusOne1, middle, PiMinusOne2);
 
         for (int eta2 = 0; eta2 <= 1; ++eta2)
@@ -229,7 +229,7 @@ Model::SuperfermionType effectiveVertexDiagram1_fromCols(
     int i1,
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     int block,
     const Model* model)
 {
@@ -249,7 +249,7 @@ Model::SuperfermionType effectiveVertexDiagram1_fromCols(
         // First compute column 0, then column 1, ...
         for (int col = 0; col < numBlocks; ++col)
         {
-            BlockVector<SciCore::Complex> resultCol = computeD_col(i1, col, t_minus_tau, tau_minus_s);
+            BlockVector resultCol = computeD_col(i1, col, t_minus_tau, tau_minus_s);
 
             for (auto& element : resultCol)
             {
@@ -262,7 +262,7 @@ Model::SuperfermionType effectiveVertexDiagram1_fromCols(
     {
         int col = block;
 
-        BlockVector<SciCore::Complex> resultCol = computeD_col(i1, col, t_minus_tau, tau_minus_s);
+        BlockVector resultCol = computeD_col(i1, col, t_minus_tau, tau_minus_s);
 
         for (auto& element : resultCol)
         {
@@ -285,7 +285,7 @@ SciCore::Matrix diagram_2(
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model)
 {
@@ -318,7 +318,7 @@ SciCore::Matrix diagram_2(
 
                         if (prefactor != 0.0)
                         {
-                            BlockVector<SciCore::Complex> G_iBar = computeD_col(iBar, blockIndex, s * q, t - s);
+                            BlockVector G_iBar = computeD_col(iBar, blockIndex, s * q, t - s);
                             addProduct(blockIndex, prefactor, superfermion[i], Pi_t, G_iBar, returnValue);
                         }
                     }
@@ -567,7 +567,7 @@ Model::SuperRowVectorType currentDiagram_2(
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
     const std::vector<int>& blockStartIndices,
     int block,

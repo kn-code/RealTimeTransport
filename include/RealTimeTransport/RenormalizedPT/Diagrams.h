@@ -63,7 +63,7 @@ SciCore::Matrix diagram_1(
 //  i2    i1  \bar{i2}
 //
 // Computes the column col of the above diagram with middle index i1
-BlockVector<SciCore::Complex> effectiveVertexDiagram1_col(
+BlockVector effectiveVertexDiagram1_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
@@ -81,7 +81,7 @@ Model::SuperfermionType effectiveVertexDiagram1_fromCols(
     int i1,
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     int col,
     const Model* model);
 
@@ -96,7 +96,7 @@ SciCore::Matrix diagram_2(
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -143,7 +143,7 @@ Model::SuperRowVectorType currentDiagram_2(
     SciCore::Real epsAbs,
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
     const std::vector<int>& blockStartIndices,
     int block,

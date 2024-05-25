@@ -146,15 +146,15 @@ void MemoryKernel::initialize(
         return propagatorMinusOne(t);
     };
 
-    std::function<BlockVector<Complex>(int, int, Real, Real)> computeD_O3_col = [&](int i, int col, Real t,
-                                                                                    Real s) -> BlockVector<Complex>
+    std::function<BlockVector(int, int, Real, Real)> computeD_O3_col = [&](int i, int col, Real t,
+                                                                           Real s) -> BlockVector
     {
         return RealTimeTransport::RenormalizedPT::Detail::effectiveVertexDiagram1_col(
             i, col, t, s, tCrit, epsAbs, computePi, computePiM1, superfermion, _model.get());
     };
 
-    std::function<BlockVector<Complex>(int, int, Real, Real)> computeD_O3_O5_col = [&](int i, int col, Real t,
-                                                                                       Real s) -> BlockVector<Complex>
+    std::function<BlockVector(int, int, Real, Real)> computeD_O3_O5_col = [&](int i, int col, Real t,
+                                                                              Real s) -> BlockVector
     {
         return _computeD_O3_O5_col(i, col, t, s, epsAbs, computePi, computeD_O3_col, superfermion);
     };
@@ -313,8 +313,8 @@ BlockDiagonalCheb MemoryKernel::_initMemoryKernel(
         BlockDiagonalCheb propagator = std::move(Pi.Pi());
         _minusIK                     = std::move(KPert.K());
 
-        std::cout << "Initialized with perturbation theory, "
-                  << "mu = " << _model->chemicalPotentials().transpose() << "\n";
+        std::cout << "Initialized with perturbation theory, " << "mu = " << _model->chemicalPotentials().transpose()
+                  << "\n";
         std::cout << "Sections =\n";
         for (const auto& sec : _minusIK.sections())
         {
@@ -341,19 +341,19 @@ BlockDiagonalCheb MemoryKernel::_initMemoryKernel(
     }
 }
 
-BlockVector<SciCore::Complex> MemoryKernel::_computeD_O3_O5_col(
+BlockVector MemoryKernel::_computeD_O3_O5_col(
     int i,
     int col,
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
     const std::vector<Model::SuperfermionType>& superfermion)
 {
     using namespace SciCore;
 
-    BlockVector<Complex> returnValue = computeD_O3_col(i, col, t_minus_tau, tau_minus_s);
+    BlockVector returnValue = computeD_O3_col(i, col, t_minus_tau, tau_minus_s);
 
     returnValue += Detail::effectiveVertexCorrection1_col(
         i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, computeD_O3_col, superfermion, _model.get());

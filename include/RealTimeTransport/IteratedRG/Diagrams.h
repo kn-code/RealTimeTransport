@@ -26,7 +26,7 @@ namespace RealTimeTransport::IteratedRG::Detail
 //  i3    i1    i2  \bar{i3}
 //
 // Computes column col of the above diagram
-BlockVector<SciCore::Complex> bareTwoPointVertex_col(
+BlockVector bareTwoPointVertex_col(
     int i1,
     int i2,
     int col,
@@ -50,14 +50,14 @@ BlockVector<SciCore::Complex> bareTwoPointVertex_col(
 //  i2    i1  \bar{i2}
 //
 // Computes the column col of the above diagram with middle index i1
-BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
+BlockVector effectiveVertexCorrection1_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -71,14 +71,14 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection1_col(
 //  i2    i1  \bar{i2}
 //
 // Computes the column col of the above diagram with middle index i1
-BlockVector<SciCore::Complex> effectiveVertexCorrection2_col(
+BlockVector effectiveVertexCorrection2_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector<SciCore::Complex>(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model);
 
@@ -91,7 +91,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection2_col(
 //  t            τ
 //  i2        \bar{i2},i1
 //
-BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
+BlockVector effectiveVertexCorrection3_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
@@ -110,7 +110,7 @@ BlockVector<SciCore::Complex> effectiveVertexCorrection3_col(
 //  t           τ
 //  i2        i1,\bar{i2}
 //
-BlockVector<SciCore::Complex> effectiveVertexCorrection4_col(
+BlockVector effectiveVertexCorrection4_col(
     int i1,
     int col,
     SciCore::Real t_minus_tau,
