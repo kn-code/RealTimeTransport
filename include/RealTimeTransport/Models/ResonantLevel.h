@@ -38,7 +38,7 @@ namespace RealTimeTransport
 /// \f]
 /// where \f$ n=d^\dagger d \f$. It is coupled to the reservoirs via the tunneling Hamiltonian
 /// \f[
-///     H_T = \sum_{r} \int d\omega \sqrt{\frac{\Gamma_{r}}{2\pi}} (a^\dagger_{r}(\omega) d + d^\dagger a_{r}(\omega)).
+///     H_T = \sum_{r} \int d\omega \sqrt{\frac{\Gamma_{r}}{2\pi}} (d^\dagger a_{r}(\omega) + a^\dagger_{r}(\omega) d).
 /// \f]
 /// All operators are represented in the basis \f$ \ket{0}, \ket{1} \f$.
 ///

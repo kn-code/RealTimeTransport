@@ -30,7 +30,13 @@ namespace RealTimeTransport
 ///
 ///  \brief Contains classes and methods related to the implementation of different models.
 ///
-///  This page describes classes and methods related to the implementation of different models.
+///  This page describes classes and methods related to the implementation of different models. A model is defined by
+///  a class that inherits from the abstract \ref Model class. This requires one to implement several functions, which
+///  provide, for example, the Hamiltonian, the field operators and information about the block structure
+///  of the memory kernel.
+///
+///  Models should be instantiated using the \ref createModel function, which automatically takes care of the involved
+///  memory management.
 ///
 ///  \{
 ///

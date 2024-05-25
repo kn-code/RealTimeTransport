@@ -15,14 +15,68 @@ DoubleDot::DoubleDot(
     SciCore::Real epsilon1,
     SciCore::Real epsilon2,
     SciCore::Real U,
-    SciCore::Complex t,
+    SciCore::Complex Omega,
     const SciCore::RealVector& T,
     const SciCore::RealVector& mu,
     const SciCore::RealVector& Gamma1,
     const SciCore::RealVector& Gamma2)
-    : _epsilon1(epsilon1), _epsilon2(epsilon2), _u(U), _t(t), _temperatures(T), _chemicalPotentials(mu),
+    : _epsilon1(epsilon1), _epsilon2(epsilon2), _u(U), _omega(Omega), _temperatures(T), _chemicalPotentials(mu),
       _gamma1(Gamma1), _gamma2(Gamma2)
 {
+}
+
+SciCore::Real DoubleDot::epsilon1() const noexcept
+{
+    return _epsilon2;
+}
+
+SciCore::Real DoubleDot::epsilon2() const noexcept
+{
+    return _epsilon2;
+}
+
+SciCore::Real DoubleDot::U() const noexcept
+{
+    return _u;
+}
+
+const SciCore::RealVector& DoubleDot::Gamma1() const noexcept
+{
+    return _gamma1;
+}
+
+const SciCore::RealVector& DoubleDot::Gamma2() const noexcept
+{
+    return _gamma2;
+}
+
+int DoubleDot::dimHilbertSpace() const noexcept
+{
+    return 4;
+}
+
+int DoubleDot::numStates() const noexcept
+{
+    return 2;
+}
+
+int DoubleDot::numChannels() const noexcept
+{
+    return 1;
+}
+
+int DoubleDot::numReservoirs() const
+{
+    return _temperatures.size();
+}
+
+DoubleDot::OperatorType DoubleDot::H() const
+{
+    OperatorType n1 = d(0).adjoint() * d(0);
+    OperatorType n2 = d(1).adjoint() * d(1);
+
+    return _epsilon1 * n1 + _epsilon2 * n2 + _u * n1 * n2 + _omega * d(0).adjoint() * d(1) +
+           std::conj(_omega) * d(1).adjoint() * d(0);
 }
 
 DoubleDot::OperatorType DoubleDot::d(int l) const

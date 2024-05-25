@@ -38,9 +38,9 @@ namespace RealTimeTransport
 /// \f]
 /// It is coupled to the reservoirs via the tunneling Hamiltonian
 /// \f[
-///     H_T = \sum_{r\sigma} \int d\omega \sqrt{\frac{\Gamma_{r\sigma}}{2\pi}} (a^\dagger_{r\sigma}(\omega) d + d^\dagger a_{r\sigma}(\omega)).
+///     H_T = \sum_{r\sigma} \int d\omega \sqrt{\frac{\Gamma_{r\sigma}}{2\pi}} (d^\dagger_\sigma a_{r\sigma}(\omega) + a^\dagger_{r\sigma}(\omega) d_\sigma).
 /// \f]
-/// All operators are represented in the basis \f$ \ket{0}, \ket{\uparrow}, \ket{\downarrow}, \ket{\uparrow\downarrow} = d^\dagger_\uparrow d^\dagger_\downarrow \ket{0} \f$.
+/// All operators are represented in the basis \f$ \ket{0}, \ket{\uparrow}=d^\dagger_\uparrow \ket{0}, \ket{\downarrow}=d^\dagger_\downarrow \ket{0}, \ket{\uparrow\downarrow} = d^\dagger_\uparrow d^\dagger_\downarrow \ket{0} \f$.
 ///
 class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
 {
@@ -66,9 +66,9 @@ class REALTIMETRANSPORT_EXPORT AndersonDot final : public Model
     /// @param epsilon  Level energy
     /// @param B        Magnetic field
     /// @param U        Coulomb interaction
-    /// @param T        Temperature reservoirs
-    /// @param mu       Chemical potentials reservoirs
-    /// @param Gamma    Spin-independent dot-reservoir couplings
+    /// @param T        Temperatures of the reservoirs
+    /// @param mu       Chemical potentials of the reservoirs
+    /// @param Gamma    Spin-independent dot-reservoir couplings \f$\Gamma_r=\Gamma_{r\uparrow}=\Gamma_{r\downarrow}\f$
     ///
     AndersonDot(
         SciCore::Real epsilon,
