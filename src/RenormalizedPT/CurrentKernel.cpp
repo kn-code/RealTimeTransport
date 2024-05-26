@@ -124,6 +124,9 @@ void CurrentKernel::_initialize(
     Real safety = 0.1;
     Real hMin   = defaultMinChebDistance(tCrit, errorGoal);
 
+    Error accuracyError;
+    bool hasAccuracyError = false;
+
     auto diagram_1 = [&](Real t) -> SuperRowVector
     {
         return Detail::currentDiagram_1(
@@ -143,12 +146,13 @@ void CurrentKernel::_initialize(
             _minusIK = ChebAdaptive<SuperRowVector>(diagram_1, sections, epsAbs, epsRel, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
             ss << "First order renormalized current kernel computation failed. Sections = "
                << _minusIK.sections().transpose();
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
     }
     else if (order == Order::_2)
@@ -175,15 +179,16 @@ void CurrentKernel::_initialize(
                 numBlocks, allInitialSections, safety* epsAbs, epsRel, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
             ss << "Second order renormalized current kernel computation failed [memoryKernelDiagram_1]. Sections:\n";
             for (const auto& sec : memoryKernelDiagram_1.sections())
             {
                 ss << sec.transpose() << "\n";
             }
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
 
         ChebAdaptive<SuperRowVector> chebDiagram1;
@@ -197,12 +202,13 @@ void CurrentKernel::_initialize(
                 ChebAdaptive<SuperRowVector>(diagram_1, sections, safety * epsAbs, epsRel, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
             ss << "Second order renormalized current kernel computation failed [chebDiagram1]. Sections: "
                << chebDiagram1.sections().transpose();
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
 
         std::function<BlockVector(int, int, Real, Real)> computeD = [&](int i, int col, Real t, Real s) -> BlockVector
@@ -238,17 +244,29 @@ void CurrentKernel::_initialize(
                 chebDiagram1.sections(), epsAbs, epsRel, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
             ss << "Second order renormalized current kernel computation failed. Sections: "
                << _minusIK.sections().transpose();
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
     }
     else
     {
         throw Error("Not implemented");
+    }
+
+    if (hasAccuracyError == true)
+    {
+        CurrentKernel preliminaryResult;
+        preliminaryResult._model            = std::move(_model);
+        preliminaryResult._errorGoal        = _errorGoal;
+        preliminaryResult._minusISigmaInfty = std::move(_minusISigmaInfty);
+        preliminaryResult._minusIK          = std::move(_minusIK);
+
+        throw AccuracyError<CurrentKernel>(std::move(accuracyError), std::move(preliminaryResult));
     }
 }
 
@@ -314,8 +332,8 @@ SciCore::ChebAdaptive<SciCore::Real> computeCurrent(
     if (ok == false)
     {
         std::stringstream ss;
-        ss << "Current accuracy goal not reached. Sections: " << returnValue.sections().transpose();
-        throw Error(ss.str());
+        ss << "Compute current accuracy goal not reached. Sections: " << returnValue.sections().transpose();
+        throw AccuracyError<ChebAdaptive<Real>>(ss.str(), std::move(returnValue));
     }
 
     return returnValue;

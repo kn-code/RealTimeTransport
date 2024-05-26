@@ -177,12 +177,20 @@ void MemoryKernel::initialize(
 
     int iteration     = 0;
     int maxIterations = 10;
+    Error accuracyError;
+    bool hasAccuracyError = false;
     while (true)
     {
         ++iteration;
         if (iteration > maxIterations)
         {
-            throw Error("Failed to converge within maximum number of iterations.");
+            if (hasAccuracyError == false)
+            {
+                hasAccuracyError = true;
+                accuracyError    = Error("Failed to converge within maximum number of iterations.");
+            }
+
+            break;
         }
 
         BlockDiagonalCheb newMinusIK;
@@ -202,15 +210,17 @@ void MemoryKernel::initialize(
                     *executor, &ok);
             }
 
-            if (ok == false)
+            if (ok == false && hasAccuracyError == false)
             {
+                hasAccuracyError = true;
                 std::stringstream ss;
-                ss << "Two loop memory kernel computation failed. Sections:\n";
+                ss << "Accuracy goal not reached in two loop memory kernel computation.\nIteration: " << iteration
+                   << "\nSections:\n";
                 for (const auto& sec : newMinusIK.sections())
                 {
                     ss << sec.transpose() << "\n";
                 }
-                throw Error(ss.str());
+                accuracyError = Error(ss.str());
             }
         }
         else if (order == Order::_3)
@@ -229,15 +239,17 @@ void MemoryKernel::initialize(
                     *executor, &ok);
             }
 
-            if (ok == false)
+            if (ok == false && hasAccuracyError == false)
             {
+                hasAccuracyError = true;
                 std::stringstream ss;
-                ss << "Three loop memory kernel computation failed. Sections:\n";
+                ss << "Accuracy goal not reached in three loop memory kernel computation.\nIteration: " << iteration
+                   << "\nSections:\n";
                 for (const auto& sec : newMinusIK.sections())
                 {
                     ss << sec.transpose() << "\n";
                 }
-                throw Error(ss.str());
+                accuracyError = Error(ss.str());
             }
         }
         else
@@ -284,6 +296,17 @@ void MemoryKernel::initialize(
             propagator         = BlockDiagonalCheb(std::move(newPropagatorBlocks));
             propagatorMinusOne = computePropagatorMinusOne(_minusILInfty, _minusIK, errorGoal, tCrit);
         }
+    }
+
+    if (hasAccuracyError == true)
+    {
+        MemoryKernel preliminaryResult;
+        preliminaryResult._model        = std::move(_model);
+        preliminaryResult._errorGoal    = _errorGoal;
+        preliminaryResult._minusILInfty = std::move(_minusILInfty);
+        preliminaryResult._minusIK      = std::move(_minusIK);
+
+        throw AccuracyError<MemoryKernel>(std::move(accuracyError), std::move(preliminaryResult));
     }
 }
 

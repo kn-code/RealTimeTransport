@@ -34,15 +34,33 @@ int main()
     auto computeI = [&](Real Vg, Real Omega) -> Real
     {
         // Create model
-        auto model = createModel<DoubleDot>(Vg, Vg, U, Omega, T, RealVector{{V/2, -V/2}}, Gamma1, Gamma2);
+        auto model = createModel<DoubleDot>(Vg, Vg, U, Omega, T, RealVector{{V / 2, -V / 2}}, Gamma1, Gamma2);
 
         // Compute memory kernel
         int block = 0;
-        auto K    = computeMemoryKernel(model, RenormalizedPT::Order::_1, tMax, errGoal, block);
-        
+        RenormalizedPT::MemoryKernel K;
+        try
+        {
+            K = computeMemoryKernel(model, RenormalizedPT::Order::_1, tMax, errGoal, block);
+        }
+        catch (AccuracyError<RenormalizedPT::MemoryKernel>& error)
+        {
+            std::cerr << "Accuracy warning at Vg=" << Vg << ", Omega=" << Omega << ": " << error.what() << "\n";
+            K = std::move(error.value());
+        }
+
         // Compute current kernel
-        int r     = 0; // Left lead
-        auto K_I  = computeCurrentKernel(model, r, RenormalizedPT::Order::_1, tMax, errGoal, block);
+        int r = 0; // Left lead
+        RenormalizedPT::CurrentKernel K_I;
+        try
+        {
+            K_I = computeCurrentKernel(model, r, RenormalizedPT::Order::_1, tMax, errGoal, block);
+        }
+        catch (AccuracyError<RenormalizedPT::CurrentKernel>& error)
+        {
+            std::cerr << "Accuracy warning at Vg=" << Vg << ", Omega=" << Omega << ": " << error.what() << "\n";
+            K_I = std::move(error.value());
+        }
 
         return K_I.stationaryCurrent(K.stationaryState());
     };
@@ -57,17 +75,9 @@ int main()
     parallelFor(
         [&](int index)
         {
-            int i = index / numPoints;
-            int j = index % numPoints;
-            try
-            {
-                I(i, j) = computeI(Vg[i], Omega[j]);
-            }
-            catch (const std::exception& e)
-            {
-                std::cerr << "Error at Vg=" << Vg[i] << ", Omega=" << Omega[j] << ": " << e.what() << std::endl;
-                I(i, j) = 0;
-            }
+            int i   = index / numPoints;
+            int j   = index % numPoints;
+            I(i, j) = computeI(Vg[i], Omega[j]);
         }, 0, numPoints * numPoints, executor);
 
     // Save data as .json file
@@ -76,8 +86,9 @@ int main()
     {
         std::ofstream os(jsonDataFile);
         cereal::JSONOutputArchive archive(os);
-        archive(CEREAL_NVP(U), CEREAL_NVP(V), CEREAL_NVP(T), CEREAL_NVP(Gamma1), CEREAL_NVP(Gamma2),
-                CEREAL_NVP(tMax), CEREAL_NVP(errGoal), CEREAL_NVP(Vg), CEREAL_NVP(Omega), CEREAL_NVP(I));
+        archive(
+            CEREAL_NVP(U), CEREAL_NVP(V), CEREAL_NVP(T), CEREAL_NVP(Gamma1), CEREAL_NVP(Gamma2),
+            CEREAL_NVP(tMax), CEREAL_NVP(errGoal), CEREAL_NVP(Vg), CEREAL_NVP(Omega), CEREAL_NVP(I));
     }
 
     // Generate python script for plotting

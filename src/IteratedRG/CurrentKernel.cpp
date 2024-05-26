@@ -127,6 +127,8 @@ void CurrentKernel::_initialize(
     Real epsRel = 0;
     Real safety = 0.1;
     Real hMin   = defaultMinChebDistance(tCrit, errorGoal);
+    Error accuracyError;
+    bool hasAccuracyError = false;
 
     auto diagram_1 = [&](Real t) -> SuperRowVector
     {
@@ -146,11 +148,12 @@ void CurrentKernel::_initialize(
         chebDiagram1 = ChebAdaptive<SuperRowVector>(diagram_1, sections, safety * epsAbs, epsRel, hMin, *executor, &ok);
     }
 
-    if (ok == false)
+    if (ok == false && hasAccuracyError == false)
     {
+        hasAccuracyError = true;
         std::stringstream ss;
         ss << "Current kernel computation failed [chebDiagram1]. Sections: " << chebDiagram1.sections().transpose();
-        throw Error(ss.str());
+        accuracyError = Error(ss.str());
     }
 
     std::function<BlockVector(int, int, Real, Real)> computeD_O3_col = [&](int i, int col, Real t,
@@ -195,7 +198,6 @@ void CurrentKernel::_initialize(
     {
         std::cout << "Eval current diagram_2 at t=" << t << std::endl;
 
-        // FIXME test: do we need a safety factor here ?
         return RenormalizedPT::Detail::currentDiagram_2(
             t, r, epsAbs, epsRel, computePi, computeD_col, Tr_superfermionAnnihilation, blockStartIndices, block,
             _model.get());
@@ -214,11 +216,23 @@ void CurrentKernel::_initialize(
             epsRel, hMin, *executor, &ok);
     }
 
-    if (ok == false)
+    if (ok == false && hasAccuracyError == false)
     {
+        hasAccuracyError = true;
         std::stringstream ss;
         ss << "Current kernel computation failed. Sections: " << _minusIK.sections().transpose();
-        throw Error(ss.str());
+        accuracyError = Error(ss.str());
+    }
+
+    if (hasAccuracyError == true)
+    {
+        CurrentKernel preliminaryResult;
+        preliminaryResult._model            = std::move(_model);
+        preliminaryResult._errorGoal        = _errorGoal;
+        preliminaryResult._minusISigmaInfty = std::move(_minusISigmaInfty);
+        preliminaryResult._minusIK          = std::move(_minusIK);
+
+        throw AccuracyError<CurrentKernel>(std::move(accuracyError), std::move(preliminaryResult));
     }
 }
 
@@ -285,8 +299,8 @@ SciCore::ChebAdaptive<SciCore::Real> computeCurrent(
     if (ok == false)
     {
         std::stringstream ss;
-        ss << "Current accuracy goal not reached. Sections: " << returnValue.sections().transpose();
-        throw Error(ss.str());
+        ss << "Compute current accuracy goal not reached. Sections: " << returnValue.sections().transpose();
+        throw AccuracyError<ChebAdaptive<Real>>(ss.str(), std::move(returnValue));
     }
 
     return returnValue;

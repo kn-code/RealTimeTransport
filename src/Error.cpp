@@ -11,12 +11,30 @@
 namespace RealTimeTransport
 {
 
-Error::Error(std::string_view message, std::source_location location)
+Error::Error() noexcept
+{
+}
+
+Error::Error(const std::string& message, std::source_location location)
 {
     std::stringstream ss;
-    ss << location.file_name() << ':' << location.line() << ": error: " << message << "[function `"
+    ss << location.file_name() << ':' << location.line() << ": error: " << message << " [function `"
        << location.function_name() << "`]";
     _what = ss.str();
+}
+
+Error::Error(Error&& other) noexcept : _what(std::move(other._what))
+{
+}
+
+Error::~Error() noexcept
+{
+}
+
+Error& Error::operator=(Error&& other) noexcept
+{
+    _what = std::move(other._what);
+    return *this;
 }
 
 const char* Error::what() const noexcept

@@ -70,6 +70,9 @@ void MemoryKernel::initialize(
         hMin = defaultMinChebDistance(tCrit, errorGoal);
     }
 
+    Error accuracyError;
+    bool hasAccuracyError = false;
+
     std::vector<RealVector> initialSections =
         (initialChebSections == nullptr) ? std::vector<RealVector>(numBlocks, defaultInitialChebSections(tMax, tCrit))
                                          : *initialChebSections;
@@ -121,15 +124,16 @@ void MemoryKernel::initialize(
             _minusIK = BlockDiagonalCheb(diagram_1, numBlocks, initialSections, errorGoal, 0.0, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
             ss << "First order renormalized memory kernel computation failed. Sections:\n";
             for (const auto& sec : _minusIK.sections())
             {
                 ss << sec.transpose() << "\n";
             }
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
     }
     else if (order == Order::_2)
@@ -156,19 +160,19 @@ void MemoryKernel::initialize(
                 numBlocks, initialSections, safety* epsAbs, epsRel, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
             ss << "Second order renormalized memory kernel computation failed [chebFullDiagram1]. Sections:\n";
             for (const auto& sec : chebFullDiagram1.sections())
             {
                 ss << sec.transpose() << "\n";
             }
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
 
-        std::function<BlockVector(int, int, Real, Real)> computeD =
-            [&](int i, int col, Real t, Real s) -> BlockVector
+        std::function<BlockVector(int, int, Real, Real)> computeD = [&](int i, int col, Real t, Real s) -> BlockVector
         {
             return Detail::effectiveVertexDiagram1_col(
                 i, col, t, s, tCrit, safety * epsAbs, computePiInfty, computePiInftyM1, superfermion, model);
@@ -246,20 +250,32 @@ void MemoryKernel::initialize(
                 numBlocks, initialSections, epsAbs, epsRel, hMin, *executor, &ok);
         }
 
-        if (ok == false)
+        if (ok == false && hasAccuracyError == false)
         {
+            hasAccuracyError = true;
             std::stringstream ss;
-            ss << "Second order renormalized memory kernel computation failed. Sections:\n";
+            ss << "Accuracy goal not reached in renormalized memory kernel computation. Sections:\n";
             for (const auto& sec : _minusIK.sections())
             {
                 ss << sec.transpose() << "\n";
             }
-            throw Error(ss.str());
+            accuracyError = Error(ss.str());
         }
     }
     else
     {
         throw Error("Not implemented");
+    }
+
+    if (hasAccuracyError == true)
+    {
+        MemoryKernel preliminaryResult;
+        preliminaryResult._model        = std::move(_model);
+        preliminaryResult._errorGoal    = _errorGoal;
+        preliminaryResult._minusILInfty = std::move(_minusILInfty);
+        preliminaryResult._minusIK      = std::move(_minusIK);
+
+        throw AccuracyError<MemoryKernel>(std::move(accuracyError), std::move(preliminaryResult));
     }
 }
 
