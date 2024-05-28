@@ -18,6 +18,54 @@
 namespace RealTimeTransport::IteratedRG
 {
 
+CurrentKernel::CurrentKernel() noexcept
+{
+}
+
+CurrentKernel::CurrentKernel(CurrentKernel&& other) noexcept
+    : _model(std::move(other._model)), _errorGoal(other._errorGoal),
+      _minusISigmaInfty(std::move(other._minusISigmaInfty)), _minusIK(std::move(other._minusIK))
+{
+}
+
+CurrentKernel::CurrentKernel(const CurrentKernel& other)
+    : _model(nullptr), _errorGoal(other._errorGoal), _minusISigmaInfty(other._minusISigmaInfty),
+      _minusIK(other._minusIK)
+{
+    if (other._model.get() != nullptr)
+    {
+        _model = other._model->copy();
+    }
+}
+
+CurrentKernel& CurrentKernel::operator=(CurrentKernel&& other)
+{
+    _model            = std::move(other._model);
+    _errorGoal        = other._errorGoal;
+    _minusISigmaInfty = std::move(other._minusISigmaInfty);
+    _minusIK          = std::move(other._minusIK);
+
+    return *this;
+}
+
+CurrentKernel& CurrentKernel::operator=(const CurrentKernel& other)
+{
+    if (other._model.get() != nullptr)
+    {
+        _model = other._model->copy();
+    }
+    else
+    {
+        _model.reset();
+    }
+
+    _errorGoal        = other._errorGoal;
+    _minusISigmaInfty = other._minusISigmaInfty;
+    _minusIK          = other._minusIK;
+
+    return *this;
+}
+
 const Model* CurrentKernel::model() const noexcept
 {
     return _model.get();

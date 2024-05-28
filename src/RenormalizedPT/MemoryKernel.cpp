@@ -37,6 +37,34 @@ MemoryKernel::MemoryKernel(const MemoryKernel& other)
     }
 }
 
+MemoryKernel& MemoryKernel::operator=(MemoryKernel&& other)
+{
+    _model        = std::move(other._model);
+    _errorGoal    = other._errorGoal;
+    _minusILInfty = std::move(other._minusILInfty);
+    _minusIK      = std::move(other._minusIK);
+
+    return *this;
+}
+
+MemoryKernel& MemoryKernel::operator=(const MemoryKernel& other)
+{
+    if (other._model.get() != nullptr)
+    {
+        _model = other._model->copy();
+    }
+    else
+    {
+        _model.reset();
+    }
+
+    _errorGoal    = other._errorGoal;
+    _minusILInfty = other._minusILInfty;
+    _minusIK      = other._minusIK;
+
+    return *this;
+}
+
 void MemoryKernel::initialize(
     const Model* model,
     Order order,
@@ -277,34 +305,6 @@ void MemoryKernel::initialize(
 
         throw AccuracyError<MemoryKernel>(std::move(accuracyError), std::move(preliminaryResult));
     }
-}
-
-MemoryKernel& MemoryKernel::operator=(MemoryKernel&& other)
-{
-    _model        = std::move(other._model);
-    _errorGoal    = other._errorGoal;
-    _minusILInfty = std::move(other._minusILInfty);
-    _minusIK      = std::move(other._minusIK);
-
-    return *this;
-}
-
-MemoryKernel& MemoryKernel::operator=(const MemoryKernel& other)
-{
-    if (other._model.get() != nullptr)
-    {
-        _model = other._model->copy();
-    }
-    else
-    {
-        _model.reset();
-    }
-
-    _errorGoal    = other._errorGoal;
-    _minusILInfty = other._minusILInfty;
-    _minusIK      = other._minusIK;
-
-    return *this;
 }
 
 bool MemoryKernel::operator==(const MemoryKernel& other) const noexcept

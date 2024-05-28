@@ -21,11 +21,11 @@ namespace IteratedRG
 class REALTIMETRANSPORT_EXPORT CurrentKernel
 {
   public:
-    CurrentKernel() noexcept                             = default;
-    CurrentKernel(CurrentKernel&& other) noexcept        = default;
-    CurrentKernel(const CurrentKernel& other)            = default;
-    CurrentKernel& operator=(CurrentKernel&& other)      = default;
-    CurrentKernel& operator=(const CurrentKernel& other) = default;
+    CurrentKernel() noexcept;
+    CurrentKernel(CurrentKernel&& other) noexcept;
+    CurrentKernel(const CurrentKernel& other);
+    CurrentKernel& operator=(CurrentKernel&& other);
+    CurrentKernel& operator=(const CurrentKernel& other);
 
     CurrentKernel(
         const MemoryKernel& K,
