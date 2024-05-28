@@ -130,10 +130,10 @@ BlockVector effectiveVertexDiagram1_col(
     int col,
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
-    SciCore::Real tCrit,
+    [[maybe_unused]] SciCore::Real tCrit,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
+    [[maybe_unused]] const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const std::vector<Model::SuperfermionType>& superfermion,
     const Model* model)
 {
