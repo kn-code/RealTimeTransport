@@ -9,12 +9,12 @@ using namespace RealTimeTransport;
 int main()
 {
     // Double dot parameters
-    Real Vg    = -1;  // Gate voltage
+    Real e     = -1;  // Dot energies
     Real U     = 5;   // Coulomb interaction
     Real Omega = 2;   // Hybridisation
     Real V     = 0.5; // Bias voltage
     RealVector T{{1, 1}}; // Temperatures leads
-    RealVector mu{{V/2, -V/2}}; // Chem. potential
+    RealVector mu{{V/2, -V/2}}; // Chem. potentials
 
     // Serial setup: lead L - dot 1 - dot 2 - lead R
     RealVector Gamma1{{1, 0}}; // Dot 1 - lead L
@@ -22,7 +22,7 @@ int main()
 
     // Create model
     auto model = createModel<DoubleDot>(
-        Vg, Vg, U, Omega, T, mu, Gamma1, Gamma2);
+        e, e, U, Omega, T, mu, Gamma1, Gamma2);
 
     // Computation parameters
     Real tMax    = 10;    // Maximum simulation time

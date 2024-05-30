@@ -21,8 +21,8 @@ int main()
     Real epsilon = -4;        // Dot energy
     Real B       = -1;        // Magnetic field
     Real U       = 10;        // Coulomb repulsion
-    RealVector T{{0, 0}};     // Temperature leads
-    RealVector mu{{2, -2}};   // Chem. potential
+    RealVector T{{0, 0}};     // Temperatures leads
+    RealVector mu{{2, -2}};   // Chem. potentials
     RealVector Gamma{{1, 1}}; // Tunnel rate to leads
     auto model = createModel<AndersonDot>(
         epsilon, B, U, T, mu, Gamma);
@@ -34,8 +34,8 @@ int main()
 
     // Compute memory kernel & propagator
     auto method = RenormalizedPT::Order::_2;
-    auto K  = computeMemoryKernel(model,
-        method, tMax, errGoal, block);
+    auto K  = computeMemoryKernel(
+        model, method, tMax, errGoal, block);
     auto Pi = computePropagator(K, block);
 
     // Set initial state: Basis 0, Up, Down, UpDown
@@ -58,7 +58,8 @@ int main()
 
     // Compute current kernel & transient current
     int r    = 0; // Left reservoir
-    auto K_I = computeCurrentKernel(model, r, method, tMax, errGoal, block);
+    auto K_I = computeCurrentKernel(
+        model, r, method, tMax, errGoal, block);
     auto I   = computeCurrent(K_I, Pi, rho0);
     RealVector I_t = I(t);
 
@@ -78,7 +79,6 @@ int main()
     std::string pythonPlotFile = "plot-transient-anderson-dot.py";
     plot(jsonDataFile, pythonPlotFile);
     std::cout << "Created python file for plotting: " << pythonPlotFile << "\n";
-    return 0;
 
     return 0;
 }
