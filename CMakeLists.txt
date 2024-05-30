@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
     RealTimeTransport
-    VERSION 0.9.0
+    VERSION 1.0.0
     DESCRIPTION "Real-time simulations of quantum dot dynamics"
     HOMEPAGE_URL "https://github.com/kn-code/RealTimeTransport"
     LANGUAGES CXX
@@ -64,7 +64,7 @@ find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 
 # SciCore
-find_package(SciCore 0.9.0 QUIET)
+find_package(SciCore 1.0.0 QUIET)
 
 # If SciCore was not found use FetchContent to download it
 if(NOT SciCore_FOUND)
