@@ -26,7 +26,7 @@ namespace RealTimeTransport
 {
 
 ///
-///  \defgroup Models Models
+///  \defgroup Models 1. Models
 ///
 ///  \brief Contains classes and methods related to the implementation of different models.
 ///

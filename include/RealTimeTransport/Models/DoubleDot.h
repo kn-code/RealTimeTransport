@@ -27,7 +27,7 @@ namespace RealTimeTransport
 {
 
 ///
-/// \ingroup Models
+/// @ingroup Models
 ///
 /// @brief Implements a spinless double quantum dot.
 ///

@@ -27,7 +27,7 @@ namespace RealTimeTransport
 {
 
 ///
-/// \ingroup Models
+/// @ingroup Models
 ///
 /// @brief Implements an Anderson quantum dot (single level with spin).
 ///

@@ -27,7 +27,7 @@ namespace RealTimeTransport
 {
 
 ///
-/// \ingroup Models
+/// @ingroup Models
 ///
 /// @brief Implements a single level without spin.
 ///
@@ -82,44 +82,27 @@ class REALTIMETRANSPORT_EXPORT ResonantLevel final : public Model
     ///
     /// @brief The Hilbert space dimension is 2 (empty and full state).
     ///
-    int dimHilbertSpace() const noexcept override
-    {
-        return 2;
-    }
+    int dimHilbertSpace() const noexcept override;
 
     ///
     /// @brief Only one single particle state.
     ///
-    int numStates() const noexcept override
-    {
-        return 1;
-    }
+    int numStates() const noexcept override;
 
     ///
     /// @brief Reservoirs are not spinful, thus returns 1.
     ///
-    int numChannels() const noexcept override
-    {
-        return 1;
-    }
+    int numChannels() const noexcept override;
 
     ///
     /// @brief Returns the number of reservoirs the system is connected to.
     ///
-    int numReservoirs() const override
-    {
-        return _temperatures.size();
-    }
+    int numReservoirs() const override;
 
     ///
     /// @brief Returns the Hamiltonian.
     ///
-    OperatorType H() const override
-    {
-        OperatorType n = d(0).adjoint() * d(0);
-
-        return _epsilon * n;
-    }
+    OperatorType H() const override;
 
     ///
     /// @brief Returns the annihilation operator. \f$l\f$ is always 0.

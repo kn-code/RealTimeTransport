@@ -27,6 +27,33 @@ SciCore::Real ResonantLevel::epsilon() const noexcept
     return _epsilon;
 }
 
+int ResonantLevel::dimHilbertSpace() const noexcept
+{
+    return 2;
+}
+
+int ResonantLevel::numStates() const noexcept
+{
+    return 1;
+}
+
+int ResonantLevel::numChannels() const noexcept
+{
+    return 1;
+}
+
+int ResonantLevel::numReservoirs() const
+{
+    return _temperatures.size();
+}
+
+ResonantLevel::OperatorType ResonantLevel::H() const
+{
+    OperatorType n = d(0).adjoint() * d(0);
+
+    return _epsilon * n;
+}
+
 // Basis |0>, |1>
 ResonantLevel::OperatorType ResonantLevel::d(int) const
 {

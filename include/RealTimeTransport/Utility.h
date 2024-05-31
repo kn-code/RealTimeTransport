@@ -4,6 +4,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+///
+/// \file   Utility.h
+///
+/// \brief  Contains various utility functions used throughout.
+///
+
 #ifndef REAL_TIME_TRANSPORT_UTILITY_H
 #define REAL_TIME_TRANSPORT_UTILITY_H
 
@@ -19,19 +25,35 @@
 namespace RealTimeTransport
 {
 
+///
+/// @brief Particle-hole \f$ \eta \f$  index.
+///
 enum class Eta : int
 {
+    /// @brief \f$ \eta=- \f$
     Minus = 0,
-    Plus  = 1,
+
+    /// @brief \f$ \eta=+ \f$
+    Plus = 1,
+
     _count
 };
 
+///
+/// @brief Keldysh index \f$ p \f$.
+///
 enum class Keldysh : int
 {
+    /// @brief \f$ p=- \f$
     Minus = 0,
-    Plus  = 1,
+
+    /// @brief \f$ p=+ \f$
+    Plus = 1,
+
     _count
 };
+
+REALTIMETRANSPORT_EXPORT Model::SuperfermionType computeSuperfermion(Keldysh p, Eta eta, int l, const Model* model);
 
 ///
 /// \brief      Computes a superfermion for a given model.
@@ -48,8 +70,6 @@ enum class Keldysh : int
 /// \param      eta     Either "-" or "+".
 /// \param      l   Index for internal degrees of freedom (always \f$ \geq 0 \f$ !).
 ///
-REALTIMETRANSPORT_EXPORT Model::SuperfermionType computeSuperfermion(Keldysh p, Eta eta, int l, const Model* model);
-
 REALTIMETRANSPORT_EXPORT inline Model::SuperfermionType computeSuperfermion(
     Keldysh p,
     Eta eta,
@@ -59,11 +79,11 @@ REALTIMETRANSPORT_EXPORT inline Model::SuperfermionType computeSuperfermion(
     return computeSuperfermion(p, eta, l, model.get());
 }
 
+REALTIMETRANSPORT_EXPORT std::vector<Model::SuperfermionType> computeAllSuperfermions(Keldysh p, const Model* model);
+
 ///
 /// @brief Computes all creation or annihilation superfermions (for p=+,- respectively) for a given model.
 ///
-REALTIMETRANSPORT_EXPORT std::vector<Model::SuperfermionType> computeAllSuperfermions(Keldysh p, const Model* model);
-
 REALTIMETRANSPORT_EXPORT inline std::vector<Model::SuperfermionType> computeAllSuperfermions(
     Keldysh p,
     const std::unique_ptr<Model>& model)
@@ -71,11 +91,11 @@ REALTIMETRANSPORT_EXPORT inline std::vector<Model::SuperfermionType> computeAllS
     return computeAllSuperfermions(p, model.get());
 }
 
+REALTIMETRANSPORT_EXPORT SciCore::Complex computeGamma(Eta eta, int r, int l1, int l2, const Model* model);
+
 ///
 /// @brief Convenience function to compute \f$ \Gamma_{η r l_1 l_2}  \f$.
 ///
-REALTIMETRANSPORT_EXPORT SciCore::Complex computeGamma(Eta eta, int r, int l1, int l2, const Model* model);
-
 REALTIMETRANSPORT_EXPORT inline SciCore::Complex computeGamma(
     Eta eta,
     int r,
@@ -86,26 +106,26 @@ REALTIMETRANSPORT_EXPORT inline SciCore::Complex computeGamma(
     return computeGamma(eta, r, l1, l2, model.get());
 }
 
+REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix computeLiouvillian(const Model* model);
+
 ///
 /// @brief Returns \f$ -i L \f$ for a given specific _model_, where \f$ L = [H, \bullet] \f$ denotes the bare
 /// Liouvillian.
 ///
-REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix computeLiouvillian(const Model* model);
-
 REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeLiouvillian(const std::unique_ptr<Model>& model)
 {
     return computeLiouvillian(model.get());
 }
 
-///
-/// @brief Returns the \f$ \delta \f$-singular part \f$ -i \Sigma_\infty \f$ of the infinite temperature memory kernel
-/// for a given fermionic wideband _model_.
-///
 REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix computeSigmaInfty(
     const std::vector<Model::SuperfermionType>& superfermion,
     const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
     const Model* model);
 
+///
+/// @brief Returns the \f$ \delta \f$-singular part \f$ -i \Sigma_\infty \f$ of the infinite temperature memory kernel
+/// for a given fermionic wideband _model_.
+///
 REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeSigmaInfty(
     const std::vector<Model::SuperfermionType>& superfermion,
     const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
@@ -114,14 +134,14 @@ REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeSigmaInfty(
     return computeSigmaInfty(superfermion, superfermionAnnihilation, model.get());
 }
 
-///
-/// @brief Returns the \f$ \delta \f$-singular part of the current kernel, \f$ -i \Sigma^{(I_r)}_{\infty} \f$, for a given fermionic wideband _model_.
-///
 REALTIMETRANSPORT_EXPORT Model::SuperRowVectorType computeSigmaInftyCurrent(
     int r,
     const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
     const Model* model);
 
+///
+/// @brief Returns the \f$ \delta \f$-singular part of the current kernel, \f$ -i \Sigma^{(I_r)}_{\infty} \f$, for a given fermionic wideband _model_.
+///
 REALTIMETRANSPORT_EXPORT inline Model::SuperRowVectorType computeSigmaInftyCurrent(
     int r,
     const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
@@ -193,18 +213,17 @@ struct REALTIMETRANSPORT_EXPORT Indices
     int l;
 };
 
+REALTIMETRANSPORT_EXPORT int singleToMultiIndex(Eta eta, int l, const Model* model);
+
 ///
 /// \brief      Converts multiple single indices into a multiindex.
 ///
-/// Transforms the two indices \f$\eta\f$ and \f$l\f$ into a single multiindex \f$i\f$ which is
-/// returned.
-///
-REALTIMETRANSPORT_EXPORT int singleToMultiIndex(Eta eta, int l, const Model* model);
-
 REALTIMETRANSPORT_EXPORT inline int singleToMultiIndex(Eta eta, int l, const std::unique_ptr<Model>& model)
 {
     return singleToMultiIndex(eta, l, model.get());
 }
+
+REALTIMETRANSPORT_EXPORT Indices multiToSingleIndices(int i, const Model* model);
 
 ///
 /// \brief      Converts a multiindex into multiple single indices.
@@ -216,8 +235,6 @@ REALTIMETRANSPORT_EXPORT inline int singleToMultiIndex(Eta eta, int l, const std
 /// const auto [eta, l] = multiToSingleIndices(model, i);
 /// \endcode
 ///
-REALTIMETRANSPORT_EXPORT Indices multiToSingleIndices(int i, const Model* model);
-
 REALTIMETRANSPORT_EXPORT inline Indices multiToSingleIndices(int i, const std::unique_ptr<Model>& model)
 {
     return multiToSingleIndices(i, model.get());
