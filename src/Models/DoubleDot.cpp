@@ -6,6 +6,8 @@
 
 #include "RealTimeTransport/Models/DoubleDot.h"
 
+#include <cereal/types/complex.hpp>
+
 namespace RealTimeTransport
 {
 
@@ -166,6 +168,36 @@ const std::vector<int>& DoubleDot::blockDimensions() const noexcept
 std::unique_ptr<Model> DoubleDot::copy() const
 {
     return std::make_unique<DoubleDot>(*this);
+}
+
+void DoubleDot::serialize(cereal::BinaryInputArchive& archive)
+{
+    archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
+}
+
+void DoubleDot::serialize(cereal::BinaryOutputArchive& archive)
+{
+    archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
+}
+
+void DoubleDot::serialize(cereal::PortableBinaryInputArchive& archive)
+{
+    archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
+}
+
+void DoubleDot::serialize(cereal::PortableBinaryOutputArchive& archive)
+{
+    archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
+}
+
+void DoubleDot::serialize(cereal::JSONInputArchive& archive)
+{
+    archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
+}
+
+void DoubleDot::serialize(cereal::JSONOutputArchive& archive)
+{
+    archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
 }
 
 } // namespace RealTimeTransport

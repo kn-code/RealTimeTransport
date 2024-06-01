@@ -166,11 +166,12 @@ class REALTIMETRANSPORT_EXPORT DoubleDot final : public Model
                (_chemicalPotentials == rhs._chemicalPotentials) && (_gamma1 == rhs._gamma1) && (_gamma2 == rhs._gamma2);
     }
 
-    template <class Archive>
-    void serialize(Archive& archive)
-    {
-        archive(_epsilon1, _epsilon2, _u, _omega, _temperatures, _chemicalPotentials, _gamma1, _gamma2);
-    }
+    void serialize(cereal::BinaryInputArchive& archive);
+    void serialize(cereal::BinaryOutputArchive& archive);
+    void serialize(cereal::PortableBinaryInputArchive& archive);
+    void serialize(cereal::PortableBinaryOutputArchive& archive);
+    void serialize(cereal::JSONInputArchive& archive);
+    void serialize(cereal::JSONOutputArchive& archive);
 
   private:
     SciCore::Real _epsilon1 = 0.0;
@@ -187,6 +188,7 @@ class REALTIMETRANSPORT_EXPORT DoubleDot final : public Model
 
 } // namespace RealTimeTransport
 
-// FIXME register type
+CEREAL_REGISTER_TYPE(RealTimeTransport::DoubleDot)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(RealTimeTransport::Model, RealTimeTransport::DoubleDot)
 
 #endif // REAL_TIME_TRANSPORT_DOUBLE_DOT_H
