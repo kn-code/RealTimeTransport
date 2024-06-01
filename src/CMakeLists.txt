@@ -57,8 +57,7 @@ generate_export_header(RealTimeTransport
     EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/../include/RealTimeTransport/RealTimeTransport_export.h
 )
 
-target_link_libraries(RealTimeTransport PRIVATE BLAS::BLAS LAPACK::LAPACK)
-target_link_libraries(RealTimeTransport PUBLIC SciCore::SciCore)
+target_link_libraries(RealTimeTransport PUBLIC BLAS::BLAS LAPACK::LAPACK SciCore::SciCore)
 
 target_include_directories(RealTimeTransport PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
@@ -66,6 +65,7 @@ target_include_directories(RealTimeTransport PUBLIC
 )
 
 target_compile_features(RealTimeTransport PUBLIC cxx_std_20)
+target_compile_definitions(RealTimeTransport PRIVATE ${REALTIMETRANSPORT_COMPILE_DEFINITIONS})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     # Every app/lib using RealTimeTransport needs to be build for the same architecture,
@@ -81,13 +81,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     $<$<CXX_COMPILER_ID:Clang>:-fno-math-errno -ffinite-math-only -fno-trapping-math -freciprocal-math -Wno-c99-extensions>
     )
 endif()
-
-# Delete BLAS and LAPACK from exported target
-# Somehow CMake exports these despite them being defined as PRIVATE
-get_target_property(_link_libs RealTimeTransport INTERFACE_LINK_LIBRARIES)
-string(REPLACE "\$<LINK_ONLY:BLAS::BLAS>;" "" _modified_link_libs "${_link_libs}")
-string(REPLACE "\$<LINK_ONLY:LAPACK::LAPACK>;" "" _modified_link_libs "${_modified_link_libs}")
-set_target_properties(RealTimeTransport PROPERTIES INTERFACE_LINK_LIBRARIES "${_modified_link_libs}")
 
 # IDEs should put the headers in a nice place
 source_group(

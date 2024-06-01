@@ -26,6 +26,25 @@ if(EXISTS "${LOC_PATH}")
     message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
 endif()
 
+# Options: use as cmake -DEIGEN_USE_BLAS=ON ...
+OPTION(EIGEN_USE_BLAS "Enable BLAS in Eigen library" OFF)
+message(STATUS "EIGEN_USE_BLAS is set to: ${EIGEN_USE_BLAS}")
+
+OPTION(EIGEN_USE_LAPACKE "Enable LAPACKE in Eigen library" OFF)
+message(STATUS "EIGEN_USE_LAPACKE is set to: ${EIGEN_USE_LAPACKE}")
+
+# Preprocessor definitions for the compilation
+set(REALTIMETRANSPORT_COMPILE_DEFINITIONS -DEIGEN_DONT_PARALLELIZE)
+if(EIGEN_USE_BLAS)
+    list(APPEND REALTIMETRANSPORT_COMPILE_DEFINITIONS -DEIGEN_USE_BLAS)
+endif()
+if(EIGEN_USE_LAPACKE)
+    list(APPEND REALTIMETRANSPORT_COMPILE_DEFINITIONS -DEIGEN_USE_LAPACKE)
+endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    list(APPEND REALTIMETRANSPORT_COMPILE_DEFINITIONS -DEIGEN_NO_DEBUG)
+endif()
+
 include(FetchContent)
 
 # Set these options only if we are the main project
