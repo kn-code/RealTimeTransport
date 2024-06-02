@@ -4,10 +4,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/IteratedRG/Diagrams.h"
+
 #include <SciCore/Integration.h>
 
 #include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
-#include "RealTimeTransport/IteratedRG/Diagrams.h"
 #include "RealTimeTransport/RenormalizedPT/Diagrams.h"
 #include "RealTimeTransport/Utility.h"
 
@@ -34,7 +35,7 @@ BlockVector bareTwoPointVertex_col(
     const BlockDiagonalMatrix& Pi2,
     const BlockDiagonalMatrix& Pi3,
     SciCore::Real epsAbs,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -65,7 +66,7 @@ BlockVector bareTwoPointVertex_col(
 
                 if (prefactor != 0.0)
                 {
-                    Model::SuperfermionType left = product(prefactor, superfermion[i3], dressed_i1, superfermion[i2]);
+                    BlockMatrix left = product(prefactor, superfermion[i3], dressed_i1, superfermion[i2]);
                     addProduct_col(col, 1.0, left, Pi3, superfermion[i3Bar], result);
                 }
             }
@@ -94,7 +95,7 @@ BlockVector effectiveVertexCorrection1_col(
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -192,7 +193,7 @@ BlockVector effectiveVertexCorrection2_col(
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -239,7 +240,7 @@ BlockVector effectiveVertexCorrection2_col(
                 BlockDiagonal Pi_t_minus_t1 = computePi(t - t1);
                 BlockDiagonal Pi_t2         = computePi(t2);
 
-                Model::SuperfermionType Geff_i1 = RenormalizedPT::Detail::effectiveVertexDiagram1_fromCols(
+                BlockMatrix Geff_i1 = RenormalizedPT::Detail::effectiveVertexDiagram1_fromCols(
                     i1, t1 - tau, tau - t2, computeD_col, -1, model);
                 productCombination_1(Pi_t_minus_t1, Geff_i1, Pi_t2);
 
@@ -290,7 +291,7 @@ BlockVector effectiveVertexCorrection3_col(
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -391,7 +392,7 @@ BlockVector effectiveVertexCorrection4_col(
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -472,6 +473,36 @@ BlockVector effectiveVertexCorrection4_col(
 
     result.eraseZeroes(0.1 * epsAbs);
     return result;
+}
+
+BlockVector computeEffectiveVertexCorrections_O3_O5_col(
+    int i,
+    int col,
+    SciCore::Real t_minus_tau,
+    SciCore::Real tau_minus_s,
+    SciCore::Real epsAbs,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
+    const std::vector<BlockMatrix>& superfermion,
+    const Model* model)
+{
+    using namespace SciCore;
+
+    BlockVector returnValue = computeD_O3_col(i, col, t_minus_tau, tau_minus_s);
+
+    returnValue += Detail::effectiveVertexCorrection1_col(
+        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, computeD_O3_col, superfermion, model);
+
+    returnValue += Detail::effectiveVertexCorrection2_col(
+        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, computeD_O3_col, superfermion, model);
+
+    returnValue += Detail::effectiveVertexCorrection3_col(
+        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, superfermion, model);
+
+    returnValue += Detail::effectiveVertexCorrection4_col(
+        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, superfermion, model);
+
+    return returnValue;
 }
 
 } // namespace RealTimeTransport::IteratedRG::Detail

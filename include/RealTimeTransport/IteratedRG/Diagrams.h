@@ -10,6 +10,7 @@
 #include <functional>
 
 #include "../BlockMatrices/BlockDiagonalMatrix.h"
+#include "../BlockMatrices/BlockMatrix.h"
 #include "../BlockMatrices/BlockVector.h"
 #include "../Model.h"
 
@@ -37,7 +38,7 @@ BlockVector bareTwoPointVertex_col(
     const BlockDiagonalMatrix& Pi2,
     const BlockDiagonalMatrix& Pi3,
     SciCore::Real epsAbs,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model);
 
 //
@@ -58,7 +59,7 @@ BlockVector effectiveVertexCorrection1_col(
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model);
 
 //
@@ -79,7 +80,7 @@ BlockVector effectiveVertexCorrection2_col(
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model);
 
 //
@@ -98,7 +99,7 @@ BlockVector effectiveVertexCorrection3_col(
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model);
 
 //
@@ -117,7 +118,18 @@ BlockVector effectiveVertexCorrection4_col(
     SciCore::Real tau,
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
+    const Model* model);
+
+BlockVector computeEffectiveVertexCorrections_O3_O5_col(
+    int i,
+    int col,
+    SciCore::Real t_minus_tau,
+    SciCore::Real tau_minus_s,
+    SciCore::Real epsAbs,
+    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
+    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model);
 
 } // namespace RealTimeTransport::IteratedRG::Detail

@@ -4,7 +4,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#include <iostream> // FIXME delete
+#include "RealTimeTransport/IteratedRG/MemoryKernel.h"
+
 #include <sstream>
 
 #include <SciCore/IDECheb.h>
@@ -12,13 +13,58 @@
 #include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
 #include "RealTimeTransport/ComputePropagator.h"
 #include "RealTimeTransport/IteratedRG/Diagrams.h"
-#include "RealTimeTransport/IteratedRG/MemoryKernel.h"
 #include "RealTimeTransport/RenormalizedPT/Diagrams.h"
 #include "RealTimeTransport/RenormalizedPT/MemoryKernel.h"
 #include "RealTimeTransport/Utility.h"
 
 namespace RealTimeTransport::IteratedRG
 {
+
+SciCore::Real minDistance(const SciCore::RealVector& vec)
+{
+    using namespace SciCore;
+
+    if (vec.size() < 2)
+    {
+        throw Error("vec must have at least two elements");
+    }
+
+    Real minDistance = std::numeric_limits<Real>::max();
+
+    for (int i = 0; i < vec.size() - 1; i++)
+    {
+        Real dist = vec[i + 1] - vec[i];
+        if (dist < minDistance)
+        {
+            minDistance = dist;
+        }
+    }
+
+    return minDistance;
+}
+
+SciCore::Real minDistance(const std::vector<SciCore::RealVector>& vectors)
+{
+    using namespace SciCore;
+
+    if (vectors.empty() == true)
+    {
+        throw Error("vectors mustn't be empty");
+    }
+
+    Real overallMinDistance = std::numeric_limits<Real>::max();
+
+    for (const RealVector& vec : vectors)
+    {
+        Real currentMinDistance = minDistance(vec);
+        if (currentMinDistance < overallMinDistance)
+        {
+            overallMinDistance = currentMinDistance;
+        }
+    }
+
+    return overallMinDistance;
+}
 
 MemoryKernel::MemoryKernel() noexcept
 {
@@ -122,13 +168,33 @@ void MemoryKernel::initialize(
     Real epsRel = 0;
     Real tCrit  = std::min(2 / maxNorm(_minusILInfty), tMax);
 
-    if (hMin < 0)
+    BlockDiagonalCheb propagator;
+    try
     {
-        hMin = defaultMinChebDistance(tCrit, errorGoal);
+        propagator = _initMemoryKernel(order, tMax, epsAbs, executor, hMin, initialChebSections);
     }
-
-    BlockDiagonalCheb propagator         = _initMemoryKernel(order, tMax, epsAbs, executor, hMin, initialChebSections);
+    catch (std::exception& e)
+    {
+        std::stringstream ss;
+        ss << "Failed to initialize RG computation of order " << static_cast<int>(order) << ".\nError message: '"
+           << e.what() << "'";
+        throw Error(ss.str());
+    }
     BlockDiagonalCheb propagatorMinusOne = computePropagatorMinusOne(_minusILInfty, _minusIK, errorGoal, tCrit);
+
+    // For two loop computations we put the minimum allowed interval size to a quarter
+    // of the interval size from the perturbation theory. This is to avoid the (rare)
+    // situation where an interpolation error goal can't be met because intermediate
+    // integration errors accumulate too much.
+    if (hMin < 0 && order == Order::_2)
+    {
+        hMin = std::nextafter(minDistance(_minusIK.sections()) / 4, std::numeric_limits<Real>::max());
+    }
+    // For three loop computations we instead use half the interval size of the two loop computation.
+    else if (hMin < 0 && order == Order::_3)
+    {
+        hMin = std::nextafter(minDistance(_minusIK.sections()) / 2, std::numeric_limits<Real>::max());
+    }
 
     std::function<BlockDiagonal(Real)> computePi = [&](Real t) -> BlockDiagonal
     {
@@ -156,12 +222,13 @@ void MemoryKernel::initialize(
     std::function<BlockVector(int, int, Real, Real)> computeD_O3_O5_col = [&](int i, int col, Real t,
                                                                               Real s) -> BlockVector
     {
-        return _computeD_O3_O5_col(i, col, t, s, epsAbs, computePi, computeD_O3_col, superfermion);
+        return IteratedRG::Detail::computeEffectiveVertexCorrections_O3_O5_col(
+            i, col, t, s, epsAbs, computePi, computeD_O3_col, superfermion, _model.get());
     };
 
     auto computeNewKernel_2Loop = [&](int blockIndex, Real t) -> Matrix
     {
-        std::cout << "computeNewKernel_2Loop: " << blockIndex << ", " << t << std::endl;
+        // std::cout << "[DBG] computeNewKernel_2Loop: block=" << blockIndex << ", t=" << t << std::endl;
         return RenormalizedPT::Detail::diagram_1(blockIndex, t, tCrit, computePi, computePiM1, superfermion, model) +
                RenormalizedPT::Detail::diagram_2(
                    blockIndex, t, epsAbs, epsRel, computePi, computeD_O3_col, superfermion, model);
@@ -169,7 +236,7 @@ void MemoryKernel::initialize(
 
     auto computeNewKernel_3Loop = [&](int blockIndex, Real t) -> Matrix
     {
-        std::cout << "computeNewKernel_3Loop: " << blockIndex << ", " << t << std::endl;
+        // std::cout << "[DBG] computeNewKernel_3Loop: block=" << blockIndex << ", t=" << t << std::endl;
         return RenormalizedPT::Detail::diagram_1(blockIndex, t, tCrit, computePi, computePiM1, superfermion, model) +
                RenormalizedPT::Detail::diagram_2(
                    blockIndex, t, epsAbs, epsRel, computePi, computeD_O3_O5_col, superfermion, model);
@@ -226,7 +293,6 @@ void MemoryKernel::initialize(
         else if (order == Order::_3)
         {
             bool ok = false;
-            std::cout << "Start iteration with sections " << _minusIK.sections()[0].transpose() << "\n";
             if (executor == nullptr)
             {
                 newMinusIK = BlockDiagonalCheb(
@@ -269,7 +335,7 @@ void MemoryKernel::initialize(
             iterationError = std::max(iterationError, err);
         }
 
-        std::cout << "Iterated with error " << iterationError << std::endl;
+        // std::cout << "Iterated with error " << iterationError << std::endl;
 
         // Update memory kernel
         _minusIK = std::move(newMinusIK);
@@ -323,74 +389,31 @@ BlockDiagonalCheb MemoryKernel::_initMemoryKernel(
     // Two loop RG is initialized with perturbation theory, but three loop RG is initialized with 2 loop RG
     if (order == Order::_2)
     {
-        // This safety factor initializes the perturbation theory more accurately then the requested error goal.
-        // This seems to be needed, otherwise the iteration later on can fail.
-        int block   = -1;
-        Real safety = 0.1;
+        int block = -1;
         RealTimeTransport::RenormalizedPT::MemoryKernel KPert;
         KPert.initialize(
-            _model.get(), RenormalizedPT::Order::_2, tMax, safety * errorGoal, executor, block, hMin,
-            initialChebSections);
+            _model.get(), RenormalizedPT::Order::_2, tMax, errorGoal, executor, block, hMin, initialChebSections);
 
         auto Pi                      = computePropagator(KPert);
         BlockDiagonalCheb propagator = std::move(Pi.Pi());
         _minusIK                     = std::move(KPert.K());
 
-        std::cout << "Initialized with perturbation theory, " << "mu = " << _model->chemicalPotentials().transpose()
-                  << "\n";
-        std::cout << "Sections =\n";
-        for (const auto& sec : _minusIK.sections())
-        {
-            std::cout << sec.transpose() << "\n";
-        }
-        std::cout << std::endl;
         return propagator;
     }
     else if (order == Order::_3)
     {
-        // FIXME is a safety factor also needed here ?
         MemoryKernel KTwoLoop;
         KTwoLoop.initialize(_model.get(), Order::_2, tMax, errorGoal, executor, hMin, initialChebSections);
         Propagator fullPi            = computePropagator(KTwoLoop);
         BlockDiagonalCheb propagator = std::move(fullPi.Pi());
         _minusIK                     = std::move(KTwoLoop.K());
 
-        std::cout << "Initialized with 2 loop RG" << std::endl;
         return propagator;
     }
     else
     {
         throw Error("Not implemented");
     }
-}
-
-BlockVector MemoryKernel::_computeD_O3_O5_col(
-    int i,
-    int col,
-    SciCore::Real t_minus_tau,
-    SciCore::Real tau_minus_s,
-    SciCore::Real epsAbs,
-    const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
-    const std::vector<Model::SuperfermionType>& superfermion)
-{
-    using namespace SciCore;
-
-    BlockVector returnValue = computeD_O3_col(i, col, t_minus_tau, tau_minus_s);
-
-    returnValue += Detail::effectiveVertexCorrection1_col(
-        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, computeD_O3_col, superfermion, _model.get());
-
-    returnValue += Detail::effectiveVertexCorrection2_col(
-        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, computeD_O3_col, superfermion, _model.get());
-
-    returnValue += Detail::effectiveVertexCorrection3_col(
-        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, superfermion, _model.get());
-
-    returnValue += Detail::effectiveVertexCorrection4_col(
-        i, col, t_minus_tau, tau_minus_s, epsAbs, computePi, superfermion, _model.get());
-
-    return returnValue;
 }
 
 BlockDiagonalMatrix MemoryKernel::zeroFrequency() const

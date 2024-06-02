@@ -15,7 +15,6 @@
 
 #include "../BlockMatrices/BlockDiagonalCheb.h"
 #include "../BlockMatrices/BlockDiagonalMatrix.h"
-#include "../BlockMatrices/BlockVector.h"
 #include "../Model.h"
 #include "../Propagator.h"
 #include "../RealTimeTransport_export.h"
@@ -197,17 +196,6 @@ class REALTIMETRANSPORT_EXPORT MemoryKernel
         tf::Executor* executor,
         SciCore::Real hMin,
         const std::vector<SciCore::RealVector>* initialChebSections);
-
-    // Returns the effective vertex (without delta singular part) of order D^3 + D^5
-    BlockVector _computeD_O3_O5_col(
-        int i,
-        int col,
-        SciCore::Real t_minus_tau,
-        SciCore::Real tau_minus_s,
-        SciCore::Real epsAbs,
-        const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-        const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_O3_col,
-        const std::vector<Model::SuperfermionType>& superfermion);
 };
 
 /// \} // end of IterRG
