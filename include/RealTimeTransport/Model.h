@@ -19,9 +19,6 @@
 
 #include <SciCore/Definitions.h>
 
-#include "BlockMatrices/BlockDiagonalMatrix.h"
-#include "BlockMatrices/BlockMatrix.h"
-
 namespace RealTimeTransport
 {
 
@@ -60,9 +57,6 @@ class REALTIMETRANSPORT_EXPORT Model
 
     /// @brief Type of superoperators.
     using SuperoperatorType = SciCore::Matrix;
-
-    /// @brief Type representing superfermions.
-    using SuperfermionType = BlockMatrix;
 
     Model() noexcept;
     virtual ~Model() noexcept;

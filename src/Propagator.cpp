@@ -4,6 +4,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/Propagator.h"
+
 #include <utility>
 
 #include <cereal/archives/binary.hpp>
@@ -12,8 +14,6 @@
 #include <cereal/types/polymorphic.hpp>
 
 #include <SciCore/Serialization.h>
-
-#include "RealTimeTransport/Propagator.h"
 
 namespace RealTimeTransport
 {

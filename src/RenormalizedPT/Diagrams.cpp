@@ -4,10 +4,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/RenormalizedPT/Diagrams.h"
+
 #include <SciCore/Integration.h>
 
 #include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
-#include "RealTimeTransport/RenormalizedPT/Diagrams.h"
 
 namespace RealTimeTransport::RenormalizedPT::Detail
 {
@@ -16,7 +17,7 @@ SciCore::Matrix diagram_1_regular(
     int blockIndex,
     SciCore::Real t,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -53,7 +54,7 @@ SciCore::Matrix diagram_1_small_t(
     int blockIndex,
     SciCore::Real t,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     assert(t > 0);
@@ -102,7 +103,7 @@ SciCore::Matrix diagram_1(
     SciCore::Real tCrit,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     if (t > tCrit)
@@ -134,7 +135,7 @@ BlockVector effectiveVertexDiagram1_col(
     SciCore::Real epsAbs,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     [[maybe_unused]] const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using namespace SciCore;
@@ -225,7 +226,7 @@ BlockVector effectiveVertexDiagram1_col(
     return result;
 }
 
-Model::SuperfermionType effectiveVertexDiagram1_fromCols(
+BlockMatrix effectiveVertexDiagram1_fromCols(
     int i1,
     SciCore::Real t_minus_tau,
     SciCore::Real tau_minus_s,
@@ -234,7 +235,7 @@ Model::SuperfermionType effectiveVertexDiagram1_fromCols(
     const Model* model)
 {
     using namespace SciCore;
-    using UnorderedElementMap = Model::SuperfermionType::UnorderedElementMap;
+    using UnorderedElementMap = BlockMatrix::UnorderedElementMap;
 
     assert(t_minus_tau > 0);
     assert(tau_minus_s > 0);
@@ -271,7 +272,7 @@ Model::SuperfermionType effectiveVertexDiagram1_fromCols(
         }
     }
 
-    return Model::SuperfermionType(std::move(resultAsMap), blockDims);
+    return BlockMatrix(std::move(resultAsMap), blockDims);
 }
 
 //  _____________
@@ -286,7 +287,7 @@ SciCore::Matrix diagram_2(
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockVector(int, int, SciCore::Real, SciCore::Real)>& computeD_col,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     assert(t > 0);
@@ -342,7 +343,7 @@ SciCore::Matrix diagram_2_2(
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computeDiagram_1,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     assert(t > 0);
@@ -406,7 +407,7 @@ Model::SuperRowVectorType currentDiagram_1_regular(
     int r,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const std::vector<int>& blockStartIndices,
     const Model* model)
 {
@@ -458,7 +459,7 @@ Model::SuperRowVectorType currentDiagram_1_small_t(
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const Model::SuperRowVectorType& idRow,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const std::vector<int>& blockStartIndices,
     const Model* model)
 {
@@ -540,7 +541,7 @@ Model::SuperRowVectorType currentDiagram_1(
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePiMinusOne,
     const Model::SuperRowVectorType& idRow,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const std::vector<int>& blockStartIndices,
     const Model* model)
 {
@@ -607,7 +608,7 @@ Model::SuperRowVectorType currentDiagram_2(
 
                         if (prefactor != 0.0)
                         {
-                            Model::SuperfermionType D_iBar =
+                            BlockMatrix D_iBar =
                                 effectiveVertexDiagram1_fromCols(iBar, s * q, t - s, computeD_col, block, model);
                             addProduct(
                                 prefactor, Tr_superfermionAnnihilation[i], Pi_t, D_iBar, returnValue,
@@ -634,7 +635,7 @@ Model::SuperRowVectorType currentDiagram_2_2(
     SciCore::Real epsRel,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computePi,
     const std::function<BlockDiagonalMatrix(SciCore::Real)>& computeDiagram_1,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const std::vector<Model::SuperRowVectorType>& Tr_superfermionAnnihilation,
     const std::vector<int>& blockStartIndices,
     const Model* model)

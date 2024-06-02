@@ -4,12 +4,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/BlockMatrices/MatrixExp.h"
+
 #include <Eigen/Eigenvalues>
 #include <Eigen/SVD>
 
 #include <SciCore/BasicMath.h>
 
-#include "RealTimeTransport/BlockMatrices/MatrixExp.h"
 #include "RealTimeTransport/Utility.h"
 
 namespace RealTimeTransport

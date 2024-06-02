@@ -4,9 +4,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#include <fstream>
-
 #include "RealTimeTransport/Models/ResonantLevel.h"
+
+#include <fstream>
 
 namespace RealTimeTransport
 {

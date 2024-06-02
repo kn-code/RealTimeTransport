@@ -4,6 +4,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/RenormalizedPT/MemoryKernel.h"
+
 #include <sstream>
 
 #include <SciCore/IDECheb.h>
@@ -12,7 +14,6 @@
 #include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
 #include "RealTimeTransport/ComputePropagator.h"
 #include "RealTimeTransport/RenormalizedPT/Diagrams.h"
-#include "RealTimeTransport/RenormalizedPT/MemoryKernel.h"
 #include "RealTimeTransport/Utility.h"
 
 namespace RealTimeTransport::RenormalizedPT

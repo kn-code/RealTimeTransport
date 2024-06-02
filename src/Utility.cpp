@@ -5,19 +5,21 @@
 //
 
 #include "RealTimeTransport/Utility.h"
-#include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
-#include "RealTimeTransport/Error.h"
-
-#include <Eigen/QR>
-#include <unsupported/Eigen/MatrixFunctions>
 
 #include <SciCore/BasicMath.h>
 #include <SciCore/Utility.h>
 
+#include <Eigen/Eigenvalues>
+#include <Eigen/QR>
+#include <unsupported/Eigen/MatrixFunctions>
+
+#include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
+#include "RealTimeTransport/Error.h"
+
 namespace RealTimeTransport
 {
 
-Model::SuperfermionType computeSuperfermion(Keldysh p, Eta eta, int l, const Model* model)
+BlockMatrix computeSuperfermion(Keldysh p, Eta eta, int l, const Model* model)
 {
     using namespace SciCore;
 
@@ -43,13 +45,13 @@ Model::SuperfermionType computeSuperfermion(Keldysh p, Eta eta, int l, const Mod
         G.col(i) = model->vectorize(result);
     }
 
-    return Model::SuperfermionType(G, model->blockDimensions());
+    return BlockMatrix(G, model->blockDimensions());
 }
 
-std::vector<Model::SuperfermionType> computeAllSuperfermions(Keldysh p, const Model* model)
+std::vector<BlockMatrix> computeAllSuperfermions(Keldysh p, const Model* model)
 {
     int maxIndex = 2 * model->numStates();
-    std::vector<Model::SuperfermionType> superfermions(maxIndex);
+    std::vector<BlockMatrix> superfermions(maxIndex);
     for (int i = 0; i < maxIndex; ++i)
     {
         auto [eta, l]    = multiToSingleIndices(i, model);
@@ -99,8 +101,8 @@ BlockDiagonalMatrix computeLiouvillian(const Model* model)
 }
 
 BlockDiagonalMatrix computeSigmaInfty(
-    const std::vector<Model::SuperfermionType>& superfermion,
-    const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
+    const std::vector<BlockMatrix>& superfermion,
+    const std::vector<BlockMatrix>& superfermionAnnihilation,
     const Model* model)
 {
     using namespace SciCore;
@@ -133,7 +135,7 @@ BlockDiagonalMatrix computeSigmaInfty(
 
 Model::SuperRowVectorType computeSigmaInftyCurrent(
     int r,
-    const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
+    const std::vector<BlockMatrix>& superfermionAnnihilation,
     const Model* model)
 {
     using namespace SciCore;
@@ -482,7 +484,7 @@ SciCore::Complex gammaMinus(SciCore::Real t, Eta eta, int l1, int l2, const Mode
 SciCore::Matrix computeGammaGG(
     int blockIndex,
     SciCore::Real t,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model)
 {
     using std::sin;
@@ -556,10 +558,7 @@ SciCore::Matrix computeGammaGG(
     return returnValue;
 }
 
-BlockDiagonalMatrix computeGammaGG(
-    SciCore::Real t,
-    const std::vector<Model::SuperfermionType>& superfermion,
-    const Model* model)
+BlockDiagonalMatrix computeGammaGG(SciCore::Real t, const std::vector<BlockMatrix>& superfermion, const Model* model)
 {
     using namespace SciCore;
 

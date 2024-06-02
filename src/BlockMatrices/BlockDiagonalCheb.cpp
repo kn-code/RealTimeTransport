@@ -4,14 +4,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/BlockMatrices/BlockDiagonalCheb.h"
+
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/portable_binary.hpp>
 
 #include <SciCore/ChebAdaptive.h>
 #include <SciCore/Serialization.h>
-
-#include "RealTimeTransport/BlockMatrices/BlockDiagonalCheb.h"
 
 namespace RealTimeTransport
 {

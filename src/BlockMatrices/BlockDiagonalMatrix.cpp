@@ -4,9 +4,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#include <SciCore/Utility.h>
-
 #include "RealTimeTransport/BlockMatrices/BlockDiagonalMatrix.h"
+
+#include <SciCore/Utility.h>
 
 namespace RealTimeTransport
 {

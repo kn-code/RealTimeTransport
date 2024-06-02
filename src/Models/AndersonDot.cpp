@@ -4,9 +4,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-#include <fstream>
-
 #include "RealTimeTransport/Models/AndersonDot.h"
+
+#include <fstream>
 
 namespace RealTimeTransport
 {

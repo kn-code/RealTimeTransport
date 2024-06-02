@@ -4,13 +4,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+#include "RealTimeTransport/RenormalizedPT/CurrentKernel.h"
+
 #include <sstream>
 
 #include <SciCore/Integration.h>
 
 #include "RealTimeTransport/BlockMatrices/MatrixExp.h"
 #include "RealTimeTransport/BlockMatrices/MatrixOperations.h"
-#include "RealTimeTransport/RenormalizedPT/CurrentKernel.h"
 #include "RealTimeTransport/RenormalizedPT/Diagrams.h"
 #include "RealTimeTransport/Utility.h"
 

@@ -15,8 +15,6 @@
 
 #include <memory>
 
-#include <Eigen/Eigenvalues>
-
 #include "BlockMatrices/BlockDiagonalMatrix.h"
 #include "BlockMatrices/BlockMatrix.h"
 #include "Model.h"
@@ -53,7 +51,7 @@ enum class Keldysh : int
     _count
 };
 
-REALTIMETRANSPORT_EXPORT Model::SuperfermionType computeSuperfermion(Keldysh p, Eta eta, int l, const Model* model);
+REALTIMETRANSPORT_EXPORT BlockMatrix computeSuperfermion(Keldysh p, Eta eta, int l, const Model* model);
 
 ///
 /// \brief      Computes a superfermion for a given model.
@@ -70,7 +68,7 @@ REALTIMETRANSPORT_EXPORT Model::SuperfermionType computeSuperfermion(Keldysh p, 
 /// \param      eta     Either "-" or "+".
 /// \param      l   Index for internal degrees of freedom (always \f$ \geq 0 \f$ !).
 ///
-REALTIMETRANSPORT_EXPORT inline Model::SuperfermionType computeSuperfermion(
+REALTIMETRANSPORT_EXPORT inline BlockMatrix computeSuperfermion(
     Keldysh p,
     Eta eta,
     int l,
@@ -79,12 +77,12 @@ REALTIMETRANSPORT_EXPORT inline Model::SuperfermionType computeSuperfermion(
     return computeSuperfermion(p, eta, l, model.get());
 }
 
-REALTIMETRANSPORT_EXPORT std::vector<Model::SuperfermionType> computeAllSuperfermions(Keldysh p, const Model* model);
+REALTIMETRANSPORT_EXPORT std::vector<BlockMatrix> computeAllSuperfermions(Keldysh p, const Model* model);
 
 ///
 /// @brief Computes all creation or annihilation superfermions (for p=+,- respectively) for a given model.
 ///
-REALTIMETRANSPORT_EXPORT inline std::vector<Model::SuperfermionType> computeAllSuperfermions(
+REALTIMETRANSPORT_EXPORT inline std::vector<BlockMatrix> computeAllSuperfermions(
     Keldysh p,
     const std::unique_ptr<Model>& model)
 {
@@ -118,8 +116,8 @@ REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeLiouvillian(const std
 }
 
 REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix computeSigmaInfty(
-    const std::vector<Model::SuperfermionType>& superfermion,
-    const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
+    const std::vector<BlockMatrix>& superfermion,
+    const std::vector<BlockMatrix>& superfermionAnnihilation,
     const Model* model);
 
 ///
@@ -127,8 +125,8 @@ REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix computeSigmaInfty(
 /// for a given fermionic wideband _model_.
 ///
 REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeSigmaInfty(
-    const std::vector<Model::SuperfermionType>& superfermion,
-    const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
+    const std::vector<BlockMatrix>& superfermion,
+    const std::vector<BlockMatrix>& superfermionAnnihilation,
     const std::unique_ptr<Model>& model)
 {
     return computeSigmaInfty(superfermion, superfermionAnnihilation, model.get());
@@ -136,7 +134,7 @@ REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeSigmaInfty(
 
 REALTIMETRANSPORT_EXPORT Model::SuperRowVectorType computeSigmaInftyCurrent(
     int r,
-    const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
+    const std::vector<BlockMatrix>& superfermionAnnihilation,
     const Model* model);
 
 ///
@@ -144,7 +142,7 @@ REALTIMETRANSPORT_EXPORT Model::SuperRowVectorType computeSigmaInftyCurrent(
 ///
 REALTIMETRANSPORT_EXPORT inline Model::SuperRowVectorType computeSigmaInftyCurrent(
     int r,
-    const std::vector<Model::SuperfermionType>& superfermionAnnihilation,
+    const std::vector<BlockMatrix>& superfermionAnnihilation,
     const std::unique_ptr<Model>& model)
 {
     return computeSigmaInftyCurrent(r, superfermionAnnihilation, model.get());
@@ -275,13 +273,13 @@ REALTIMETRANSPORT_EXPORT inline SciCore::Complex gammaMinus(
 REALTIMETRANSPORT_EXPORT SciCore::Matrix computeGammaGG(
     int blockIndex,
     SciCore::Real t,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const Model* model);
 
 REALTIMETRANSPORT_EXPORT inline SciCore::Matrix computeGammaGG(
     int blockIndex,
     SciCore::Real t,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const std::unique_ptr<Model>& model)
 {
     return computeGammaGG(blockIndex, t, superfermion, model.get());
@@ -289,11 +287,11 @@ REALTIMETRANSPORT_EXPORT inline SciCore::Matrix computeGammaGG(
 
 // Computes \sum_1 gamma_1(t) * G^+_1 G^+_{\bar{1}}
 REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix
-computeGammaGG(SciCore::Real t, const std::vector<Model::SuperfermionType>& superfermion, const Model* model);
+computeGammaGG(SciCore::Real t, const std::vector<BlockMatrix>& superfermion, const Model* model);
 
 REALTIMETRANSPORT_EXPORT inline BlockDiagonalMatrix computeGammaGG(
     SciCore::Real t,
-    const std::vector<Model::SuperfermionType>& superfermion,
+    const std::vector<BlockMatrix>& superfermion,
     const std::unique_ptr<Model>& model)
 {
     return computeGammaGG(t, superfermion, model.get());
