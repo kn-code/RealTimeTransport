@@ -355,8 +355,6 @@ SciCore::Matrix diagram_2_2(
     StaticRealVector<2> lower{0, 0};
     StaticRealVector<2> upper{1, 1};
 
-    // It appears that this safety factor is sometimes necessary.
-    Real safety = 0.1;
     return integrate2DAdaptive(
         [&](Real p, Real q) -> SciCore::Matrix
         {
@@ -394,7 +392,7 @@ SciCore::Matrix diagram_2_2(
 
             return returnValue;
         },
-        lower, upper, safety* epsAbs, safety* epsRel);
+        lower, upper, epsAbs, epsRel);
 }
 
 //  _____________
