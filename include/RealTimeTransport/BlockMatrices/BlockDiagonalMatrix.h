@@ -4,6 +4,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+///
+/// \file   BlockDiagonalMatrix.h
+///
+/// \brief  Contains a class representing block diagonal matrices.
+///
+
 #ifndef REAL_TIME_TRANSPORT_BLOCK_MATRICES_BLOCK_DIAGONAL_H
 #define REAL_TIME_TRANSPORT_BLOCK_MATRICES_BLOCK_DIAGONAL_H
 
@@ -18,51 +24,142 @@
 namespace RealTimeTransport
 {
 
+///
+/// @brief Represents a block diagonal matrix.
+///
+/// This class represents a complex valued block diagonal matrix.
+///
 class REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix
 {
   public:
-    using Scalar     = SciCore::Complex;
+    /// @brief Type representing the matrix elements.
+    using Scalar = SciCore::Complex;
+
+    /// @brief Type representing a matrix block.
     using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
 
+    ///
+    /// @brief Constructs an empty block diagonal matrix.
+    ///
     BlockDiagonalMatrix() noexcept;
-    BlockDiagonalMatrix(std::vector<MatrixType>&& newBlocks) noexcept;
 
+    ///
+    /// @brief Move constructor.
+    ///
+    BlockDiagonalMatrix(BlockDiagonalMatrix&& other) noexcept;
+
+    ///
+    /// @brief Copy constructor.
+    ///
+    BlockDiagonalMatrix(const BlockDiagonalMatrix& other);
+
+    ///
+    /// @brief Constructs a block diagonal matrix with given \a blocks.
+    ///
+    BlockDiagonalMatrix(std::vector<MatrixType>&& blocks) noexcept;
+
+    ///
+    /// @brief Constructs a block diagonal matrix from a dense \a matrix where the dimensions of the blocks are given by \a blockDimensions.
+    ///
     template <typename DenseMatrixT>
     BlockDiagonalMatrix(const DenseMatrixT& matrix, const std::vector<int>& blockDimensions)
     {
         fromDense(matrix, blockDimensions);
     }
 
-    BlockDiagonalMatrix(BlockDiagonalMatrix&& other) noexcept;
-    BlockDiagonalMatrix(const BlockDiagonalMatrix& other);
-
-    bool operator==(const BlockDiagonalMatrix& other) const;
-    bool operator!=(const BlockDiagonalMatrix& other) const;
-
-    static BlockDiagonalMatrix Zero(const std::vector<int>& blockDimensions);
-    static BlockDiagonalMatrix Identity(const std::vector<int>& blockDimensions);
-
+    ///
+    /// @brief Move assignment operator.
+    ///
     BlockDiagonalMatrix& operator=(BlockDiagonalMatrix&& other) noexcept;
+
+    ///
+    /// @brief Copy assignment operator.
+    ///
     BlockDiagonalMatrix& operator=(const BlockDiagonalMatrix& other);
 
+    ///
+    /// @brief Equality comparison operator.
+    ///
+    bool operator==(const BlockDiagonalMatrix& other) const;
+
+    ///
+    /// @brief Inequality comparison operator.
+    ///
+    bool operator!=(const BlockDiagonalMatrix& other) const;
+
+    ///
+    /// @brief Returns a matrix with given \a blockDimensions that is zero everywhere.
+    ///
+    static BlockDiagonalMatrix Zero(const std::vector<int>& blockDimensions);
+
+    ///
+    /// @brief Returns a matrix with given \a blockDimensions equal to the identity matrix.
+    ///
+    static BlockDiagonalMatrix Identity(const std::vector<int>& blockDimensions);
+
+    ///
+    /// @brief Adds the block diagonal matrix \a rhs to the object.
+    ///
     BlockDiagonalMatrix& operator+=(const BlockDiagonalMatrix& rhs);
+
+    ///
+    /// @brief Subtracts the block diagonal matrix \a rhs from the object.
+    ///
     BlockDiagonalMatrix& operator-=(const BlockDiagonalMatrix& rhs);
 
+    ///
+    /// @brief Multiplies the block diagonal matrix \a rhs from the right to object.
+    ///
     BlockDiagonalMatrix& operator*=(const BlockDiagonalMatrix& rhs);
+
+    ///
+    /// @brief Multiplies the object by the a \a scalar.
+    ///
     BlockDiagonalMatrix& operator*=(SciCore::Real scalar);
+
+    ///
+    /// @brief Multiplies the object by the a \a scalar.
+    ///
     BlockDiagonalMatrix& operator*=(SciCore::Complex scalar);
 
+    ///
+    /// @brief Multiplies the number of blocks.
+    ///
     int numBlocks() const noexcept;
+
+    ///
+    /// @brief Returns the total number of rows.
+    ///
     int totalRows() const noexcept;
+
+    ///
+    /// @brief Returns the total number of columns.
+    ///
     int totalCols() const noexcept;
 
+    ///
+    /// @brief Returns a vector containing the dimensions of each block.
+    ///
     std::vector<int> blockDimensions() const;
 
+    ///
+    /// @brief Returns the matrix block with index \a i.
+    ///
     MatrixType& operator()(int i);
+
+    ///
+    /// @brief Returns the matrix block with index \a i.
+    ///
     const MatrixType& operator()(int i) const;
 
+    ///
+    /// @brief Creates a new block diagonal matrix from given \a blocks.
+    ///
     void fromBlocks(std::vector<MatrixType>&& newBlocks);
 
+    ///
+    /// @brief Constructs a block diagonal matrix from a dense \a matrix where the dimensions of the blocks are given by \a blockDimensions.
+    ///
     template <typename DenseMatrixT>
     void fromDense(const DenseMatrixT& matrix, const std::vector<int>& blockDimensions)
     {
@@ -83,13 +180,25 @@ class REALTIMETRANSPORT_EXPORT BlockDiagonalMatrix
         }
     }
 
+    ///
+    /// @brief Sets the matrix to zero with block dimensions \a blockDimensions.
+    ///
     void setZero(const std::vector<int>& blockDimensions);
 
+    ///
+    /// @brief Returns a dense matrix representation.
+    ///
     MatrixType toDense() const;
 
-    // Member function to return the element at a given row and column
-    const Scalar& element(int row, int col) const;
-    Scalar& element(int row, int col);
+    ///
+    /// @brief Returns the matrix element at a given \a row and \a column.
+    ///
+    const Scalar& element(int row, int column) const;
+
+    ///
+    /// @brief Returns the matrix element at a given \a row and \a column.
+    ///
+    Scalar& element(int row, int colum);
 
     template <class Archive>
     void serialize(Archive& archive)

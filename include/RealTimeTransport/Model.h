@@ -62,12 +62,12 @@ class REALTIMETRANSPORT_EXPORT Model
     virtual ~Model() noexcept;
 
     ///
-    /// @brief  Equality comparison operator
+    /// @brief  Equality comparison operator.
     ///
     bool operator==(const Model& other) const;
 
     ///
-    /// @brief  Inequality comparison operator
+    /// @brief  Inequality comparison operator.
     ///
     bool operator!=(const Model& other) const;
 

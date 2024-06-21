@@ -15,17 +15,31 @@ BlockDiagonalMatrix::BlockDiagonalMatrix() noexcept
 {
 }
 
-BlockDiagonalMatrix::BlockDiagonalMatrix(std::vector<MatrixType>&& newBlocks) noexcept
-{
-    fromBlocks(std::move(newBlocks));
-}
-
 BlockDiagonalMatrix::BlockDiagonalMatrix(BlockDiagonalMatrix&& other) noexcept : _blocks(std::move(other._blocks))
 {
 }
 
 BlockDiagonalMatrix::BlockDiagonalMatrix(const BlockDiagonalMatrix& other) : _blocks(other._blocks)
 {
+}
+
+BlockDiagonalMatrix::BlockDiagonalMatrix(std::vector<MatrixType>&& newBlocks) noexcept
+{
+    fromBlocks(std::move(newBlocks));
+}
+
+BlockDiagonalMatrix& BlockDiagonalMatrix::operator=(BlockDiagonalMatrix&& other) noexcept
+{
+    _blocks = std::move(other._blocks);
+
+    return *this;
+}
+
+BlockDiagonalMatrix& BlockDiagonalMatrix::operator=(const BlockDiagonalMatrix& other)
+{
+    _blocks = other._blocks;
+
+    return *this;
 }
 
 bool BlockDiagonalMatrix::operator==(const BlockDiagonalMatrix& other) const
@@ -54,20 +68,6 @@ BlockDiagonalMatrix BlockDiagonalMatrix::Identity(const std::vector<int>& blockD
         blocks[i] = MatrixType::Identity(blockDimensions[i], blockDimensions[i]);
     }
     return BlockDiagonalMatrix(std::move(blocks));
-}
-
-BlockDiagonalMatrix& BlockDiagonalMatrix::operator=(BlockDiagonalMatrix&& other) noexcept
-{
-    _blocks = std::move(other._blocks);
-
-    return *this;
-}
-
-BlockDiagonalMatrix& BlockDiagonalMatrix::operator=(const BlockDiagonalMatrix& other)
-{
-    _blocks = other._blocks;
-
-    return *this;
 }
 
 BlockDiagonalMatrix& BlockDiagonalMatrix::operator+=(const BlockDiagonalMatrix& rhs)

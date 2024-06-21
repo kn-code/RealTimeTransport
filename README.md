@@ -49,12 +49,12 @@ target_link_libraries(myExecutable PRIVATE RealTimeTransport::RealTimeTransport)
 
 ## Dependencies
 
-This library uses some C++-20 features and therefore needs a not too old compiler. The following compilers were used successfully in the build process:
+This library requires CMake (version ≥ 3.25) to be built. Some C++-20 features are used which need a not too old compiler. The following compilers were used successfully in the build process:
 
 * gcc 11.4.0
 * clang 16
 
-Some functionalities require _blas_ and _lapacke_ packages, which are on Ubuntu-type systems most easily installed with
+_BLAS_ and _LAPACKE_ can be enabled in the build process through the flags `-DEIGEN_USE_BLAS=ON` and `-DEIGEN_USE_LAPACKE=ON` (by default off). On Ubuntu-type systems the _BLAS_ and _LAPACKE_ libraries can be most easily installed with
 
 ```bash
 $ apt install libopenblas-dev liblapacke-dev
