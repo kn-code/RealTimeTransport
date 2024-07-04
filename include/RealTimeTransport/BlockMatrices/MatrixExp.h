@@ -55,7 +55,10 @@ class REALTIMETRANSPORT_EXPORT BlockDiagonalMatrixExp
     void initialize(const BlockDiagonalMatrix& A);
 
     BlockDiagonalMatrix operator()(SciCore::Real t) const;
+    BlockDiagonalMatrix::MatrixType operator()(int blockIndex, SciCore::Real t) const;
+
     BlockDiagonalMatrix expm1(SciCore::Real t) const;
+    BlockDiagonalMatrix::MatrixType expm1(int blockIndex, SciCore::Real t) const;
 
   private:
     std::vector<MatrixExp> _blocks;

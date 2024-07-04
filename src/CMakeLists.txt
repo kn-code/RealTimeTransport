@@ -17,6 +17,8 @@ set(HEADER_LIST
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/CurrentKernel.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/Diagrams.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/MemoryKernel.h"
+    "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/RenormalizedPT/ConductanceDiagrams.h"
+    "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/RenormalizedPT/ConductanceKernel.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/RenormalizedPT/CurrentKernel.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/RenormalizedPT/Diagrams.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/RenormalizedPT/MemoryKernel.h"
@@ -35,6 +37,8 @@ add_library(RealTimeTransport SHARED
     IteratedRG/CurrentKernel.cpp
     IteratedRG/Diagrams.cpp
     IteratedRG/MemoryKernel.cpp
+    RenormalizedPT/ConductanceDiagrams.cpp
+    RenormalizedPT/ConductanceKernel.cpp
     RenormalizedPT/CurrentKernel.cpp
     RenormalizedPT/Diagrams.cpp
     RenormalizedPT/MemoryKernel.cpp

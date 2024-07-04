@@ -19,18 +19,18 @@
 namespace RealTimeTransport::IteratedRG
 {
 
-CurrentKernel::CurrentKernel() noexcept
+CurrentKernel::CurrentKernel() noexcept : _r(-1), _errorGoal(-1)
 {
 }
 
 CurrentKernel::CurrentKernel(CurrentKernel&& other) noexcept
-    : _model(std::move(other._model)), _errorGoal(other._errorGoal),
+    : _model(std::move(other._model)), _r(other._r), _errorGoal(other._errorGoal),
       _minusISigmaInfty(std::move(other._minusISigmaInfty)), _minusIK(std::move(other._minusIK))
 {
 }
 
 CurrentKernel::CurrentKernel(const CurrentKernel& other)
-    : _model(nullptr), _errorGoal(other._errorGoal), _minusISigmaInfty(other._minusISigmaInfty),
+    : _model(nullptr), _r(other._r), _errorGoal(other._errorGoal), _minusISigmaInfty(other._minusISigmaInfty),
       _minusIK(other._minusIK)
 {
     if (other._model.get() != nullptr)
@@ -42,6 +42,7 @@ CurrentKernel::CurrentKernel(const CurrentKernel& other)
 CurrentKernel& CurrentKernel::operator=(CurrentKernel&& other)
 {
     _model            = std::move(other._model);
+    _r                = other._r;
     _errorGoal        = other._errorGoal;
     _minusISigmaInfty = std::move(other._minusISigmaInfty);
     _minusIK          = std::move(other._minusIK);
@@ -60,6 +61,7 @@ CurrentKernel& CurrentKernel::operator=(const CurrentKernel& other)
         _model.reset();
     }
 
+    _r                = other._r;
     _errorGoal        = other._errorGoal;
     _minusISigmaInfty = other._minusISigmaInfty;
     _minusIK          = other._minusIK;
@@ -70,6 +72,11 @@ CurrentKernel& CurrentKernel::operator=(const CurrentKernel& other)
 const Model* CurrentKernel::model() const noexcept
 {
     return _model.get();
+}
+
+int CurrentKernel::r() const noexcept
+{
+    return _r;
 }
 
 SciCore::Real CurrentKernel::tMax() const
@@ -121,6 +128,7 @@ void CurrentKernel::_initialize(
     using SuperRowVector = Model::SuperRowVectorType;
 
     _model     = K.model()->copy();
+    _r         = r;
     _errorGoal = errorGoal;
 
     // Compute superfermions
@@ -245,8 +253,6 @@ void CurrentKernel::_initialize(
 
     auto diagram_2 = [&](Real t) -> SuperRowVector
     {
-        std::cout << "Eval current diagram_2 at t=" << t << std::endl;
-
         return RenormalizedPT::Detail::currentDiagram_2(
             t, r, epsAbs, epsRel, computePi, computeD_col, Tr_superfermionAnnihilation, blockStartIndices, block,
             _model.get());

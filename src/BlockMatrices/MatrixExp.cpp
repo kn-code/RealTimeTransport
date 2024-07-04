@@ -140,6 +140,18 @@ BlockDiagonalMatrix BlockDiagonalMatrixExp::operator()(SciCore::Real t) const
     return BlockDiagonalMatrix(std::move(blocks));
 }
 
+BlockDiagonalMatrix::MatrixType BlockDiagonalMatrixExp::operator()(int blockIndex, SciCore::Real t) const
+{
+#ifdef REAL_TIME_TRANSPORT_DEBUG
+    if (blockIndex < 0 || blockIndex >= _blocks.size())
+    {
+        throw Error("Invalid block index");
+    }
+#endif
+
+    return _blocks[blockIndex](t);
+}
+
 BlockDiagonalMatrix BlockDiagonalMatrixExp::expm1(SciCore::Real t) const
 {
     using namespace SciCore;
@@ -153,6 +165,18 @@ BlockDiagonalMatrix BlockDiagonalMatrixExp::expm1(SciCore::Real t) const
     }
 
     return BlockDiagonalMatrix(std::move(blocks));
+}
+
+BlockDiagonalMatrix::MatrixType BlockDiagonalMatrixExp::expm1(int blockIndex, SciCore::Real t) const
+{
+#ifdef REAL_TIME_TRANSPORT_DEBUG
+    if (blockIndex < 0 || blockIndex >= _blocks.size())
+    {
+        throw Error("Invalid block index");
+    }
+#endif
+
+    return _blocks[blockIndex].expm1(t);
 }
 
 } // namespace RealTimeTransport

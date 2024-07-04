@@ -269,6 +269,26 @@ REALTIMETRANSPORT_EXPORT inline SciCore::Complex gammaMinus(
     return gammaMinus(t, eta, l1, l2, model.get());
 }
 
+// d/dμ γ^-(t)
+REALTIMETRANSPORT_EXPORT SciCore::Complex d_dmu_gammaMinus(
+    SciCore::Real t,
+    Eta eta,
+    int l1,
+    int l2,
+    int r,
+    const Model* model);
+
+REALTIMETRANSPORT_EXPORT inline SciCore::Complex d_dmu_gammaMinus(
+    SciCore::Real t,
+    Eta eta,
+    int l1,
+    int l2,
+    int r,
+    const std::unique_ptr<Model>& model)
+{
+    return d_dmu_gammaMinus(t, eta, l1, l2, r, model.get());
+}
+
 // Computes \sum_1 gamma_1(t) * G^+_1 G^+_{\bar{1}}
 REALTIMETRANSPORT_EXPORT SciCore::Matrix computeGammaGG(
     int blockIndex,

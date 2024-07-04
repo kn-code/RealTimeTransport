@@ -103,6 +103,11 @@ class REALTIMETRANSPORT_EXPORT CurrentKernel
     const Model* model() const noexcept;
 
     ///
+    /// @brief Returns the reservoir index for which the current kernel was computed.
+    ///
+    int r() const noexcept;
+
+    ///
     /// @brief Returns the maximum simulation time.
     ///
     SciCore::Real tMax() const;
@@ -135,11 +140,12 @@ class REALTIMETRANSPORT_EXPORT CurrentKernel
     template <class Archive>
     void serialize(Archive& archive)
     {
-        archive(_model, _errorGoal, _minusISigmaInfty, _minusIK);
+        archive(_model, _r, _errorGoal, _minusISigmaInfty, _minusIK);
     }
 
   private:
     std::unique_ptr<Model> _model;
+    int _r;
     SciCore::Real _errorGoal;
 
     Model::SuperRowVectorType _minusISigmaInfty;

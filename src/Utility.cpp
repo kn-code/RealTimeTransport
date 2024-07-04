@@ -481,6 +481,40 @@ SciCore::Complex gammaMinus(SciCore::Real t, Eta eta, int l1, int l2, const Mode
     return returnValue;
 }
 
+SciCore::Complex d_dmu_gammaMinus(SciCore::Real t, Eta eta, int l1, int l2, int r, const Model* model)
+{
+    using std::exp;
+    using std::sinh;
+    using namespace SciCore;
+
+    constexpr Real pi = std::numbers::pi_v<Real>;
+
+    Real etaEff   = (eta == Eta::Minus) ? -1 : 1;
+    Real T        = model->temperatures()[r];
+    Real mu       = model->chemicalPotentials()[r];
+    Complex Gamma = computeGamma(eta, r, l1, l2, model);
+
+    if (Gamma == 0.0)
+    {
+        return 0.0;
+    }
+
+    if (T == 0)
+    {
+        // return - etaEff * (Gamma / pi) * std::exp(-I * (etaEff * mu * t));
+        Gamma *= -etaEff / pi;
+        Gamma *= std::exp(Complex(0, -etaEff * mu * t));
+        return Gamma;
+    }
+    else
+    {
+        //return - (etaEff * t * T * Gamma / std::sinh(pi * t * T)) * std::exp(-I * (etaEff * mu * t));
+        Gamma *= -(etaEff * t * T) / std::sinh(pi * t * T);
+        Gamma *= std::exp(Complex(0, -etaEff * mu * t));
+        return Gamma;
+    }
+}
+
 SciCore::Matrix computeGammaGG(
     int blockIndex,
     SciCore::Real t,
