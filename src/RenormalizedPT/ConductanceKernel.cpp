@@ -12,10 +12,67 @@
 #include "RealTimeTransport/RenormalizedPT/Diagrams.h"
 #include "RealTimeTransport/Utility.h"
 
-#include <Eigen/QR>
-
 namespace RealTimeTransport::RenormalizedPT
 {
+
+ConductanceKernel::ConductanceKernel() noexcept : _r(-1), _errorGoal(-1)
+{
+}
+
+ConductanceKernel::ConductanceKernel(ConductanceKernel&& other) noexcept
+    : _model(std::move(other._model)), _r(other._r), _errorGoal(other._errorGoal), _rhoStat(std::move(other._rhoStat)),
+      _d_dmu_rhoStat(std::move(other._d_dmu_rhoStat)), _currentKernelZeroFreq(std::move(other._currentKernelZeroFreq)),
+      _d_dmu_memoryKernel(std::move(other._d_dmu_memoryKernel)),
+      _d_dmu_currentKernel(std::move(other._d_dmu_currentKernel))
+{
+}
+
+ConductanceKernel::ConductanceKernel(const ConductanceKernel& other)
+    : _model(nullptr), _r(other._r), _errorGoal(other._errorGoal), _rhoStat(other._rhoStat),
+      _d_dmu_rhoStat(other._d_dmu_rhoStat), _currentKernelZeroFreq(other._currentKernelZeroFreq),
+      _d_dmu_memoryKernel(other._d_dmu_memoryKernel), _d_dmu_currentKernel(other._d_dmu_currentKernel)
+{
+    if (other._model.get() != nullptr)
+    {
+        _model = other._model->copy();
+    }
+}
+
+ConductanceKernel& ConductanceKernel::operator=(ConductanceKernel&& other)
+{
+    _model                 = std::move(other._model);
+    _r                     = other._r;
+    _errorGoal             = other._errorGoal;
+    _rhoStat               = std::move(other._rhoStat);
+    _d_dmu_rhoStat         = std::move(other._d_dmu_rhoStat);
+    _currentKernelZeroFreq = std::move(other._currentKernelZeroFreq);
+    _d_dmu_memoryKernel    = std::move(other._d_dmu_memoryKernel);
+    _d_dmu_currentKernel   = std::move(other._d_dmu_currentKernel);
+
+    return *this;
+}
+
+ConductanceKernel& ConductanceKernel::operator=(const ConductanceKernel& other)
+{
+    if (other._model.get() != nullptr)
+    {
+        _model = other._model->copy();
+    }
+    else
+    {
+        _model.reset();
+    }
+
+    _r                     = other._r;
+    _errorGoal             = other._errorGoal;
+    _rhoStat               = other._rhoStat;
+    _d_dmu_rhoStat         = other._d_dmu_rhoStat;
+    _currentKernelZeroFreq = other._currentKernelZeroFreq;
+    _d_dmu_memoryKernel    = other._d_dmu_memoryKernel;
+    _d_dmu_currentKernel   = other._d_dmu_currentKernel;
+
+    return *this;
+}
 
 int ConductanceKernel::r() const noexcept
 {
@@ -316,47 +373,7 @@ void ConductanceKernel::_initialize(
         throw Error("Not implemented");
     }
 
-    //
-    // Compute dρ/dμ by solving dΣ/dμ ρ + Σ dρ/dμ = 0, where ρ denotes the stationary state
-    // and Σ the memory kernel at zero-freqeuncy. It must be enforced that Tr dρ/dμ = 0.
-    //
-    // FIXME this only uses the block structure if block==0, otherwise the full equation is solved
-    if (block < 0 || block > 0)
-    {
-        BlockDiagonalMatrix d_dmu_SigmaZeroFreq = _d_dmu_memoryKernel.integrate()(tMax);
-        Supervector b                           = -(d_dmu_SigmaZeroFreq * _rhoStat);
-        Matrix A                                = K.zeroFrequency().toDense();
-        A.row(A.rows() - 1)                     = idRow;
-        b[A.rows() - 1]                         = 0.0;
-        _d_dmu_rhoStat                          = A.colPivHouseholderQr().solve(b);
-    }
-    else if (block == 0)
-    {
-        if (_rhoStat.tail(_rhoStat.size() - blockDims[block]).isZero() == false)
-        {
-            throw Error("Stationary state does not have the required structure");
-        }
-
-        if (idRow.tail(idRow.size() - blockDims[block]).isZero() == false)
-        {
-            throw Error("Inconsistent block structure");
-        }
-
-        Matrix A                   = K.zeroFrequency()(block);
-        Matrix d_dmu_SigmaZeroFreq = _d_dmu_memoryKernel.block(block).integrate()(tMax);
-        Supervector b              = -(d_dmu_SigmaZeroFreq * _rhoStat.segment(0, blockDims[block]));
-
-        A.row(A.rows() - 1)                   = idRow.segment(0, blockDims[block]);
-        b[A.rows() - 1]                       = 0.0;
-        _d_dmu_rhoStat                        = Supervector::Zero(dim * dim);
-        _d_dmu_rhoStat.head(blockDims[block]) = A.colPivHouseholderQr().solve(b);
-    }
-    else
-    {
-        throw Error("Logic error");
-    }
-
-    truncToZero(_d_dmu_rhoStat, std::numeric_limits<Real>::epsilon());
+    _d_dmu_rhoStat = Detail::compute_d_dmu_rhoStat(K, _d_dmu_memoryKernel, _rhoStat, idRow, block);
 }
 
 } // namespace RealTimeTransport::RenormalizedPT

@@ -28,8 +28,8 @@ namespace RenormalizedPT
 /// @brief Defines the renormalized conductance kernel.
 ///
 /// This class computes the conductance kernel via the renormalized perturbation theory. This kernel can be used
-/// to compute the conductance \f$ dI_r/d\mu_r \f$ of reservoir \f$ r \f$ without numerical differentiation, which is
-/// numerically more stable. The memory and current kernel must be computed first in order to use this class.
+/// to compute the stationary conductance \f$ dI_r/d\mu_r \f$ of reservoir \f$ r \f$ without numerical differentiation,
+/// which is numerically more stable. The memory and current kernel must be computed first in order to use this class.
 /// A cross conductance \f$ dI_r/d\mu_{r'} \f$ can be obtained by first computing the current kernel for resrevoir
 /// \f$ r \f$, and then the conductance kernel for reservoir \f$ r' \f$.
 ///
@@ -171,9 +171,9 @@ class REALTIMETRANSPORT_EXPORT ConductanceKernel
 ///
 /// @ingroup RenPT
 ///
-/// @brief Computes the conductance kernel for a given model.
+/// @brief Computes the conductance kernel for a given model in the same reservoir for which the current kernel was computed.
 ///
-/// Computes the conductance kernel for a given model.
+/// Computes the conductance kernel for a given model in the same reservoir for which the current kernel was computed.
 ///
 /// @param K        The memory kernel for a given model.
 /// @param KI       The current kernel for a given model.

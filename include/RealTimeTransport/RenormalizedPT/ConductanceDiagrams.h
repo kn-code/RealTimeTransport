@@ -7,15 +7,79 @@
 #ifndef REAL_TIME_TRANSPORT_RENORMALIZED_PT_CONDUCTANCE_DIAGRAMS_H
 #define REAL_TIME_TRANSPORT_RENORMALIZED_PT_CONDUCTANCE_DIAGRAMS_H
 
+#include "../BlockMatrices/BlockDiagonalCheb.h"
 #include "../BlockMatrices/BlockDiagonalMatrix.h"
 #include "../BlockMatrices/BlockMatrix.h"
 #include "../BlockMatrices/BlockVector.h"
 #include "../Model.h"
 
+#include <SciCore/ChebAdaptive.h>
+#include <SciCore/Utility.h>
+
+#include <Eigen/QR>
+
 #include <functional>
 
 namespace RealTimeTransport::RenormalizedPT::Detail
 {
+
+//
+// Compute dρ/dμ by solving dΣ/dμ ρ + Σ dρ/dμ = 0, where ρ denotes the stationary state
+// and Σ the memory kernel at zero-freqeuncy. It must be enforced that Tr dρ/dμ = 0.
+//
+template <typename MemoryKernelT>
+Model::SupervectorType compute_d_dmu_rhoStat(
+    const MemoryKernelT& memoryKernel,
+    const BlockDiagonalCheb& d_dmu_memoryKernel,
+    const Model::SupervectorType& rhoStat,
+    const Model::SuperRowVectorType& idRow,
+    int block)
+{
+    using namespace SciCore;
+    using Supervector = Model::SupervectorType;
+
+    Supervector returnValue           = Supervector::Zero(idRow.size());
+    Real tMax                         = memoryKernel.tMax();
+    const std::vector<int>& blockDims = memoryKernel.model()->blockDimensions();
+
+    // FIXME this only uses the block structure if block==0, otherwise the full equation is solved
+    if (block < 0 || block > 0)
+    {
+        BlockDiagonalMatrix d_dmu_SigmaZeroFreq = d_dmu_memoryKernel.integrate()(tMax);
+        Supervector b                           = -(d_dmu_SigmaZeroFreq * rhoStat);
+        Matrix A                                = memoryKernel.zeroFrequency().toDense();
+        A.row(A.rows() - 1)                     = idRow;
+        b[A.rows() - 1]                         = 0.0;
+        returnValue                             = A.colPivHouseholderQr().solve(b);
+    }
+    else if (block == 0)
+    {
+        if (rhoStat.tail(rhoStat.size() - blockDims[block]).isZero() == false)
+        {
+            throw Error("Stationary state does not have the required structure");
+        }
+
+        if (idRow.tail(idRow.size() - blockDims[block]).isZero() == false)
+        {
+            throw Error("Inconsistent block structure");
+        }
+
+        Matrix A                   = memoryKernel.zeroFrequency()(block);
+        Matrix d_dmu_SigmaZeroFreq = d_dmu_memoryKernel.block(block).integrate()(tMax);
+        Supervector b              = -(d_dmu_SigmaZeroFreq * rhoStat.segment(0, blockDims[block]));
+
+        A.row(A.rows() - 1)                = idRow.segment(0, blockDims[block]);
+        b[A.rows() - 1]                    = 0.0;
+        returnValue.head(blockDims[block]) = A.colPivHouseholderQr().solve(b);
+    }
+    else
+    {
+        throw Error("Logic error");
+    }
+
+    truncToZero(returnValue, std::numeric_limits<Real>::epsilon());
+    return returnValue;
+}
 
 //  ______/______
 //  |           |

@@ -92,7 +92,7 @@ if(NOT SciCore_FOUND)
     FetchContent_Declare(
         SciCore
         GIT_REPOSITORY https://github.com/kn-code/SciCore
-        GIT_TAG        main
+        GIT_TAG        v1.0.0
     )
 
     FetchContent_MakeAvailable(SciCore)

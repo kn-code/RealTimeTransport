@@ -25,6 +25,7 @@ int main()
 
     // Simulation parameters
     auto method  = RenormalizedPT::Order::_2;
+    int r        = 0;
     Real tMax    = 5;
     Real errGoal = 1e-3;
     int block    = 0;
@@ -38,7 +39,7 @@ int main()
         {
             auto model = createModel<AndersonDot>(epsilon[i], B, U, T, mu, Gamma);
             auto K     = computeMemoryKernel(model, method, tMax, errGoal, block);
-            auto KI    = computeCurrentKernel(model, block, method, tMax, errGoal, block);
+            auto KI    = computeCurrentKernel(model, r, method, tMax, errGoal, block);
             auto KC    = computeConductanceKernel(K, KI, method, block);
 
             dIdV[i] = KC.conductance();
