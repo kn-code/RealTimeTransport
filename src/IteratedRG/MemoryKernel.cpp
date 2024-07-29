@@ -166,6 +166,7 @@ void MemoryKernel::initialize(
 
     Real epsAbs = errorGoal;
     Real epsRel = 0;
+    Real safety = 0.1;
     Real tCrit  = std::min(2 / maxNorm(_minusILInfty), tMax);
 
     BlockDiagonalCheb propagator;
@@ -216,7 +217,7 @@ void MemoryKernel::initialize(
                                                                            Real s) -> BlockVector
     {
         return RealTimeTransport::RenormalizedPT::Detail::effectiveVertexDiagram1_col(
-            i, col, t, s, tCrit, epsAbs, computePi, computePiM1, superfermion, _model.get());
+            i, col, t, s, tCrit, safety * epsAbs, computePi, computePiM1, superfermion, _model.get());
     };
 
     std::function<BlockVector(int, int, Real, Real)> computeD_O3_O5_col = [&](int i, int col, Real t,
@@ -231,7 +232,7 @@ void MemoryKernel::initialize(
         // std::cout << "[DBG] computeNewKernel_2Loop: block=" << blockIndex << ", t=" << t << std::endl;
         return RenormalizedPT::Detail::diagram_1(blockIndex, t, tCrit, computePi, computePiM1, superfermion, model) +
                RenormalizedPT::Detail::diagram_2(
-                   blockIndex, t, epsAbs, epsRel, computePi, computeD_O3_col, superfermion, model);
+                   blockIndex, t, safety * epsAbs, epsRel, computePi, computeD_O3_col, superfermion, model);
     };
 
     auto computeNewKernel_3Loop = [&](int blockIndex, Real t) -> Matrix
@@ -348,7 +349,7 @@ void MemoryKernel::initialize(
         else
         {
             // Iteration was not successful --> update propagator
-            Real safety   = 0.01;
+            Real safetyPi = 0.01;
             int nMinCheb  = 3 * 16;
             int numBlocks = model->blockDimensions().size();
             std::vector<ChebAdaptive<Matrix>> newPropagatorBlocks;
@@ -356,7 +357,8 @@ void MemoryKernel::initialize(
             for (int blockIndex = 0; blockIndex < numBlocks; ++blockIndex)
             {
                 newPropagatorBlocks.emplace_back(computePropagatorIde(
-                    _minusILInfty(blockIndex), _minusIK.block(blockIndex), 0, tMax, safety * epsAbs, epsRel, nMinCheb));
+                    _minusILInfty(blockIndex), _minusIK.block(blockIndex), 0, tMax, safetyPi * epsAbs, epsRel,
+                    nMinCheb));
             }
 
             propagator         = BlockDiagonalCheb(std::move(newPropagatorBlocks));

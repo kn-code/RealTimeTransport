@@ -254,8 +254,8 @@ void CurrentKernel::_initialize(
     auto diagram_2 = [&](Real t) -> SuperRowVector
     {
         return RenormalizedPT::Detail::currentDiagram_2(
-            t, r, epsAbs, epsRel, computePi, computeD_col, Tr_superfermionAnnihilation, blockStartIndices, block,
-            _model.get());
+            t, r, safety * epsAbs, epsRel, computePi, computeD_col, Tr_superfermionAnnihilation, blockStartIndices,
+            block, _model.get());
     };
 
     if (executor == nullptr)
