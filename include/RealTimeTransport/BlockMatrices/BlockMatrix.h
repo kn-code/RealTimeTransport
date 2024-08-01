@@ -47,6 +47,8 @@ class REALTIMETRANSPORT_EXPORT BlockMatrix
     BlockMatrix& operator=(const BlockMatrix& other);
 
     BlockMatrix& operator*=(Scalar x);
+    BlockMatrix& operator+=(const BlockMatrix& other);
+
     const std::vector<int>& blockDimensions() const noexcept;
 
     ///

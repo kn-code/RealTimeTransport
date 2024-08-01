@@ -54,6 +54,28 @@ TEST(BlockMatrix, ConvertToAndFromDense)
     EXPECT_EQ(originalMatrix, convertedMatrix);
 }
 
+TEST(BlockMatrix, operatorAddAssign)
+{
+    Matrix Adense{
+        {0, 0, 1, 2, 0},
+        {0, 0, 3, 4, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {5, 6, 0, 0, 0}
+    };
+
+    Matrix Bdense = Matrix::Random(5, 5);
+
+    Matrix expected = Adense + Bdense;
+
+    std::vector<int> blockDims = {2, 2, 1};
+    BlockMatrix A(Adense, blockDims);
+    BlockMatrix B(Bdense, blockDims);
+    A += B;
+
+    EXPECT_EQ(expected, A.toDense());
+}
+
 TEST(addProduct, BlockMatrix_Vector)
 {
     const Matrix A{

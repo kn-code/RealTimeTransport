@@ -57,10 +57,37 @@ BlockMatrix& BlockMatrix::operator=(const BlockMatrix& other)
 
 BlockMatrix& BlockMatrix::operator*=(BlockMatrix::Scalar x)
 {
-    for (auto& el : _elements)
+    if (x == 0.0)
     {
-        el.second *= x;
+        _elements.clear();
+        _nonZeroRows.clear();
+        _nonZeroCols.clear();
     }
+    else
+    {
+        for (auto& el : _elements)
+        {
+            el.second *= x;
+        }
+    }
+
+    return *this;
+}
+
+BlockMatrix& BlockMatrix::operator+=(const BlockMatrix& other)
+{
+    if (_blockDims != other._blockDims)
+    {
+        throw Error("Block dimensions don't match");
+    }
+
+    for (auto it = other._elements.begin(); it != other._elements.end(); ++it)
+    {
+        int row = it->first.first;
+        int col = it->first.second;
+        addToBlock(row, col, BlockMatrix::MatrixType(it->second));
+    }
+
     return *this;
 }
 
