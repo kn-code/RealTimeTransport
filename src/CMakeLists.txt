@@ -14,6 +14,8 @@ set(HEADER_LIST
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/BlockMatrices/BlockVector.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/BlockMatrices/MatrixExp.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/BlockMatrices/MatrixOperations.h"
+    "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/ConductanceDiagrams.h"
+    "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/ConductanceKernel.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/CurrentKernel.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/Diagrams.h"
     "${RealTimeTransport_SOURCE_DIR}/include/RealTimeTransport/IteratedRG/MemoryKernel.h"
@@ -34,6 +36,8 @@ add_library(RealTimeTransport SHARED
     Models/AndersonDot.cpp
     Models/DoubleDot.cpp
     Models/ResonantLevel.cpp
+    IteratedRG/ConductanceDiagrams.cpp
+    IteratedRG/ConductanceKernel.cpp
     IteratedRG/CurrentKernel.cpp
     IteratedRG/Diagrams.cpp
     IteratedRG/MemoryKernel.cpp
