@@ -1,6 +1,8 @@
 # RealTimeTransport
 
-_RealTimeTransport_ is a C++20 library to simulate the real time dynamics of quantum transport processes. For a description of the implemented methods and usage examples, please see the [manuscript](http://arxiv.org/abs/2405.18340) and the [documentation](https://konstantin-nestmann.com/RealTimeTransport).
+_RealTimeTransport_ is a C++20 library to simulate the real time dynamics of quantum transport processes. For a description of the implemented methods and usage examples, please see the [paper](
+https://doi.org/10.1063/5.0220783
+) and the [documentation](https://konstantin-nestmann.com/RealTimeTransport).
 
 ## Building the library
 
